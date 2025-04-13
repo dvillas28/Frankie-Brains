@@ -8,8 +8,12 @@ from datetime import datetime
 pygame.init()
 
 # Buscar una cámara conectada
-def find_camera():
-    for i in range(1,10):
+def find_camera(start_range=0):
+    if os.name == 'nt':
+        start_range = 1 # saltarse la camara de defecto
+    
+    ranges = (start_range,10)
+    for i in range(*ranges):
         cap = cv2.VideoCapture(i)
         if cap.isOpened():
             ret, _ = cap.read()
@@ -17,10 +21,6 @@ def find_camera():
             if ret:
                 return i
     return None
-
-# Reducimos resolución para mejor rendimiento
-# cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-# cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
 # Pantalla principal en modo fullscreen
 info = pygame.display.Info()
@@ -102,9 +102,12 @@ while running:
         camera_index = find_camera()
         if camera_index is not None:
             cap = cv2.VideoCapture(camera_index)
-            # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # Configurar resolución
-            # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
             
+            # Resolucion de alta calidad
+            #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+            #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+            
+            # Resolucion de baja calidad
             cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Configurar resolución
             cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
             
