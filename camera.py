@@ -17,6 +17,7 @@ class Camera():
 		# ventana de tkinter
 		self.root = tk.Tk()
 		self.root.title("Camara")
+		self.fullscreen = True
 		self.root.attributes("-fullscreen", True)
 		
 		self.status_text = tk.StringVar()
@@ -26,19 +27,29 @@ class Camera():
 		self.status_label.pack(pady=20, expand=True)
 
 		# label donde ira a la imagen
-		self.video_label = tk.Label(self.root)
-		self.video_label.pack(expand=True) # geometry manager
+		self.video_label = tk.Label(self.root, bg='black')
+		self.video_label.pack(expand=True, fill='both') # geometry manager
 		
 		# busqueda de la camara
 		self.cap = None
+		self.root.bind("<Key>", self.handle_keypress) # asociar el handler al event loop
+		self.root.bind("<Escape>", self.toggle_fullscreen)
+		
 		self.start_search_for_camera()
+	
+	def start_search_for_camera(self):
+		"""
+		Iniciar la busqueda indefinida de una camara
+		"""
+		
+		self.search_for_camera()
 	
 	def search_for_camera(self):
 		"""
 		Buscar indefinidamente una camara
 		"""
 		
-		self.status_text.set("Buscando una camara...")
+		self.status_text.set("Buscando camara...")
 		self.root.update()
 		
 		found_camera = None
@@ -67,13 +78,6 @@ class Camera():
 		else:
 			# self.status_text.set("No se encontro camara. Reintentando...")
 			self.root.after(2000, self.search_for_camera)
-	
-	def start_search_for_camera(self):
-		"""
-		Iniciar la busqueda indefinida de una camara
-		"""
-		
-		self.search_for_camera()
 		
 	def show_frame(self) -> None:
 		
@@ -81,8 +85,32 @@ class Camera():
 			ret, frame = self.cap.read()
 			if ret:
 				# convertirlo a imagen de PIL
-				cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-				img = Image.fromarray(cv2image)
+				frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+				frame_h, frame_w = frame.shape[:2] # Dimensiones originales
+				
+				# Dimensionaes actuales del label
+				label_w = self.video_label.winfo_width()
+				label_h = self.video_label.winfo_height()
+				
+				if label_w < 2 or label_h < 2:
+					self.root.after(10, self.show_frame)
+					return
+				
+				# Calcular la relación de aspecto
+				frame_ratio = frame_w / frame_h
+				label_ratio = label_w / label_h
+				
+				# Ajustar sin romper la relacion de aspecto
+				if frame_ratio > label_ratio:
+					new_width = label_w
+					new_height = int(label_w / frame_ratio)
+					
+				else:
+					new_height = label_h
+					new_width = int(label_h * frame_ratio)
+					
+				resized_frame = cv2.resize(frame_rgb, (new_height, new_width), interpolation=cv2.INTER_AREA)
+				img = Image.fromarray(resized_frame)
 				imgTk = ImageTk.PhotoImage(image=img)
 			
 				# mostrar la imagen
@@ -110,42 +138,38 @@ class Camera():
 			if filepath:
 				cv2.imwrite(filepath, frame)
 				print(f"photo saved on {filepath}")	
-				
+	
+	def toggle_fullscreen(self, event=None):
+		self.fullscreen = not self.fullscreen
+		self.root.attributes("-fullscreen", self.fullscreen)
+		if not self.fullscreen:
+			self.root.geometry("1280x720")
+		else:
+			self.root.geometry("") # dejar que se ajuste a fullscreen
+	
+	def handle_keypress(self, event):
+		print(event.char)
+	
+		if event.char == "p":
+			cam.take_photo()
+		
+		elif event.char == "q":
+			cam.quit()
+	
+	def quit(self) -> None:
+		if self.cap:
+			self.cap.release()
+		cv2.destroyAllWindows()
+		self.root.quit()
+		print("Exiting...")
+	
 	def start(self) -> None:
 		print("p: take photo")
 		print("q: quit camera")
-		
-		
 		# iniciar el loop de la app
 		self.root.mainloop()
-		self.cap.release()
-		cv2.destroyAllWindows()
 		
-	def quit(self) -> None:
-		self.cap.release()
-		cv2.destroyAllWindows()
-		print("Exiting...")
-		
-
 
 
 cam = Camera()
-
-def handle_keypress(event):
-	print(event.char)
-	
-	if event.char == "p":
-		cam.take_photo()
-		
-	elif event.char == "q":
-		cam.quit()
-		cam.root.quit()
-
-def quit_fullscreen(event):
-	cam.root.attributes("-fullscreen", False)
-
-cam.root.bind("<Key>", handle_keypress) # asociar el handler al event loop
-cam.root.bind("<Escape>", quit_fullscreen)
-
 cam.start()
-
