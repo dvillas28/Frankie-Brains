@@ -25,7 +25,8 @@ def find_camera(start_range=0):
 # Pantalla principal en modo fullscreen
 info = pygame.display.Info()
 screen_width, screen_height = info.current_w, info.current_h
-screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN | pygame.SCALED)
+# screen = pygame.display.set_mode((800, 600))  # Resolución fija para pruebas
 pygame.mouse.set_visible(False)
 
 clock = pygame.time.Clock()
@@ -72,6 +73,31 @@ def take_photo(frame):
     pics_dir = os.path.join(abspath, "pics")
     os.makedirs(pics_dir, exist_ok=True)
 
+    # Rotar la imagen según el ángulo actual
+    if rotation_angle == 90:
+        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+
+    elif rotation_angle == 180:
+        frame = cv2.rotate(frame, cv2.ROTATE_180)
+
+    elif rotation_angle == 270:
+        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    
+    # OJO: si bien la imagen se puede rotar, el resultado final dependera de la posicion final de la camara
+    # Esto es un parametro que depende de nosotros asi que hay que acordarlo y hacer el programa en funcion a eso
+
+    # La otra opcion podria ser fijar una referencia en el papel y rotar la imagen en base a esto
+
+    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE) # si la camara esta Oeste, rotar hasta aca
+    
+    frame = cv2.rotate(frame, cv2.ROTATE_180) # Si la camara esta Norte, rotar hasta aca
+
+    # Para Este y Sur, se aplican mas rotaciones...
+    
+    
+    # Revertir la imagen
+    frame = cv2.flip(frame, 0)
+        
     now = datetime.now()
     filename = now.strftime("%Y_%m_%d-%H-%M-%S") + ".jpg"
     filepath = os.path.join(pics_dir, filename)
@@ -86,7 +112,8 @@ def toggle_fullscreen():
         screen = pygame.display.set_mode((screen_width, screen_height), pygame.FULLSCREEN)
         pygame.mouse.set_visible(False)
     else:
-        screen = pygame.display.set_mode((1280, 720))
+        # screen = pygame.display.set_mode((1280, 720))
+        screen = pygame.display.set_mode((800, 600))
         pygame.mouse.set_visible(True)
 
 # Loop principal
@@ -97,19 +124,28 @@ cap = None
 photo_taken_Event = pygame.USEREVENT + 1
 photo_taken = False
 
+rotation_angle = 0
+
 while running:
     if not camera_found:
         camera_index = find_camera()
         if camera_index is not None:
             cap = cv2.VideoCapture(camera_index)
             
-            # Resolucion de alta calidad
-            #cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-            #cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+            if len(sys.argv) > 1:
+                option = sys.argv[1]
+
+                if option == "h":
+
+                    # Resolucion de alta calidad
+                    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+                    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+
+                else:
             
-            # Resolucion de baja calidad
-            cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Configurar resolución
-            cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                    # Resolucion de baja calidad
+                    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Configurar resolución
+                    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
             
             # cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))  # Usar MJPEG
             # cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.5)  # Ajustar brillo
@@ -138,6 +174,9 @@ while running:
             # Escalar la imagen sin mantener la proporción
             frame_surface = pygame.transform.scale(frame_surface, (target_w, target_h))
 
+            # Aplicar rotación
+            frame_surface = pygame.transform.rotate(frame_surface, rotation_angle)
+
             # Dibujar la imagen en la pantalla
             screen.blit(frame_surface, (bar_size, 0))  # Mostrar la imagen desde la esquina superior izquierda
 
@@ -145,6 +184,7 @@ while running:
             draw_text("<p>: tomar una foto", 20, win_h // 2)
             draw_text("<q>: cerrar programa", 20, win_h // 2 + 40)
             draw_text("<Esc>: fullscreen", 20, win_h // 2 + 40*2)
+            draw_text("<Arrow Keys>: rotar imagen", 20, win_h // 2 + 40*3)
             # draw_text("Texto en el borde derecho", win_w - 300, win_h // 2)
 
         if photo_taken:
@@ -159,15 +199,25 @@ while running:
             running = False
 
         elif event.type == pygame.KEYDOWN:
+            
             if event.key == pygame.K_q:
                 running = False
+            
             elif event.key == pygame.K_p:
                 take_photo(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
                 photo_taken = True
                 pygame.time.set_timer(photo_taken_Event, 5000)
 
+            # Pantalla completa
             elif event.key == pygame.K_ESCAPE:
                 toggle_fullscreen()
+
+            # Rotaciones de imagen
+            elif event.key == pygame.K_LEFT:
+                rotation_angle = (rotation_angle - 90) % 360 # 90° a la izquierda
+
+            elif event.key == pygame.K_RIGHT:
+                rotation_angle = (rotation_angle + 90) % 360 # 90° a la derecha
 
         if event.type == photo_taken_Event:
             pygame.time.set_timer(photo_taken_Event, 0)
