@@ -2,7 +2,28 @@ import pygame
 import cv2
 import sys
 import os
+import argparse
 from datetime import datetime
+
+# Parser de argumentos por consola
+ap = argparse.ArgumentParser()
+
+# Argumento para especificar la calidad del video
+ap.add_argument("-q", "--quality",
+                required=False,
+                help="Parametro de calidad de la camara. Low: 0, High: 1. Valor default: 0",
+                choices=["0", "1"],
+                default="0")
+
+# Se asume que la camara esta en orientacion norte por defecto
+ap.add_argument("-o", "--orientation",
+                required=False,
+                help="Parametro de orientación de la camara. Valor default: n (norte)",
+                choices=["n", "o", "s", "e"],
+                default="n",
+                type=str.lower)
+
+args = vars(ap.parse_args())
 
 # Inicializar pygame
 pygame.init()
@@ -73,27 +94,22 @@ def take_photo(frame):
     pics_dir = os.path.join(abspath, "pics")
     os.makedirs(pics_dir, exist_ok=True)
 
-    # Rotar la imagen según el ángulo actual
-    if rotation_angle == 90:
-        frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
-
-    elif rotation_angle == 180:
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
-
-    elif rotation_angle == 270:
-        frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    orientation = args["orientation"].lower()
     
-    # OJO: si bien la imagen se puede rotar, el resultado final dependera de la posicion final de la camara
-    # Esto es un parametro que depende de nosotros asi que hay que acordarlo y hacer el programa en funcion a eso
+    match orientation:
 
-    # La otra opcion podria ser fijar una referencia en el papel y rotar la imagen en base a esto
+        case "n":
+            frame = cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
 
-    frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE) # si la camara esta Oeste, rotar hasta aca
-    
-    frame = cv2.rotate(frame, cv2.ROTATE_180) # Si la camara esta Norte, rotar hasta aca
+        # La orientacion Oeste no necesita rotacion
+        # case "O":
+            
+        case "s":
+            frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
-    # Para Este y Sur, se aplican mas rotaciones...
-    
+        case "e":
+            frame = cv2.rotate(frame, cv2.ROTATE_180)
+
     
     # Revertir la imagen
     frame = cv2.flip(frame, 0)
@@ -124,7 +140,30 @@ cap = None
 photo_taken_Event = pygame.USEREVENT + 1
 photo_taken = False
 
-rotation_angle = 0
+def set_rotation_angle():
+    """
+    Rotar el video en funcion de la orientacion actual de la camara
+    """
+
+    rot = 0
+    orientation = args["orientation"].lower()
+
+    match orientation:
+        case "n":
+            rot = (rot) % 360
+
+        case "o":
+            rot = (rot + 90) % 360
+
+        case "s":
+            rot = (rot + 180) % 360
+
+        case "e":
+            rot = (rot - 90) % 360
+            
+    return rot
+
+rotation_angle = set_rotation_angle()
 
 while running:
     if not camera_found:
@@ -132,20 +171,19 @@ while running:
         if camera_index is not None:
             cap = cv2.VideoCapture(camera_index)
             
-            if len(sys.argv) > 1:
-                option = sys.argv[1]
+            quality = int(args["quality"])
+                
+            if quality:
 
-                if option == "h":
+                # Resolucion de alta calidad
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
-                    # Resolucion de alta calidad
-                    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-                    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-
-                else:
+            else:
             
-                    # Resolucion de baja calidad
-                    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Configurar resolución
-                    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+                # Resolucion de baja calidad
+                cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)  # Configurar resolución
+                cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
             
             # cap.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc(*'MJPG'))  # Usar MJPEG
             # cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.5)  # Ajustar brillo
@@ -182,10 +220,18 @@ while running:
 
             # Mostrar texto en los bordes grises
             draw_text("<p>: tomar una foto", 20, win_h // 2)
-            draw_text("<q>: cerrar programa", 20, win_h // 2 + 40)
-            draw_text("<Esc>: fullscreen", 20, win_h // 2 + 40*2)
-            draw_text("<Arrow Keys>: rotar imagen", 20, win_h // 2 + 40*3)
-            # draw_text("Texto en el borde derecho", win_w - 300, win_h // 2)
+            draw_text("<q>: cerrar programa", 20, win_h // 2 + 20)
+            draw_text("<Esc>: fullscreen", 20, win_h // 2 + 20*2)
+            draw_text("<Arrow Keys>: rotar imagen", 20, win_h // 2 + 20*3)
+            
+
+            # Mostrar la orientación predeterminada ingresada en consola
+            default_orientation_text = f"Orientación: {args['orientation'].upper()}"
+            draw_text(default_orientation_text, 0, 0)
+
+            # Mostrar la rotacion actual en base a la orientacion predeterminada
+            rotation_angle_text = f"Rotación actual: {rotation_angle}°"
+            draw_text(rotation_angle_text, 0, 20)
 
         if photo_taken:
             draw_wrapped_text(f"Foto guardada en: {filepath}", win_w - 500, win_h // 2, 250)            
