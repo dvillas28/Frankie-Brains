@@ -215,16 +215,18 @@ while running:
             # Aplicar rotación
             frame_surface = pygame.transform.rotate(frame_surface, rotation_angle)
 
+            # Calcular la posición para centrar la imagen
+            if rotation_angle in [90, 270]:
+                x_offset = (win_w - target_h) // 2
+                y_offset = (win_h - target_w) // 2
+            else:
+                x_offset = (win_w - target_w) // 2
+                y_offset = (win_h - target_h) // 2
+
             # Dibujar la imagen en la pantalla
-            screen.blit(frame_surface, (bar_size, 0))  # Mostrar la imagen desde la esquina superior izquierda
+            screen.blit(frame_surface, (x_offset, y_offset))
 
             # Mostrar texto en los bordes grises
-            draw_text("<p>: tomar una foto", 20, win_h // 2)
-            draw_text("<q>: cerrar programa", 20, win_h // 2 + 20)
-            draw_text("<Esc>: fullscreen", 20, win_h // 2 + 20*2)
-            draw_text("<Arrow Keys>: rotar imagen", 20, win_h // 2 + 20*3)
-            
-
             # Mostrar la orientación predeterminada ingresada en consola
             default_orientation_text = f"Orientación: {args['orientation'].upper()}"
             draw_text(default_orientation_text, 0, 0)
@@ -232,7 +234,13 @@ while running:
             # Mostrar la rotacion actual en base a la orientacion predeterminada
             rotation_angle_text = f"Rotación actual: {rotation_angle}°"
             draw_text(rotation_angle_text, 0, 20)
-
+            
+            # Controles
+            draw_text("<p>: tomar una foto", 0, win_h // 2)
+            draw_text("<q>: cerrar programa", 0, win_h // 2 + 20)
+            draw_text("<Esc>: fullscreen", 0, win_h // 2 + 20*2)
+            draw_text("<Arrow Keys>: rotar", 0, win_h // 2 + 20*3)
+            
         if photo_taken:
             draw_wrapped_text(f"Foto guardada en: {filepath}", win_w - 500, win_h // 2, 250)            
 
