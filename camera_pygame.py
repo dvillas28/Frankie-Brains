@@ -4,6 +4,7 @@ import sys
 import os
 import argparse
 from datetime import datetime
+from detect_blur import check_blur
 
 # Parser de argumentos por consola
 ap = argparse.ArgumentParser()
@@ -88,8 +89,10 @@ def draw_wrapped_text(text, x, y, max_width, color=(255, 255, 255)):
         screen.blit(text_surface, (x, y + i * line_height))
 
 filepath = ''
+is_blurry = ''
 def take_photo(frame):
     global filepath
+    global is_blurry
     abspath = os.path.dirname(os.path.realpath(__file__))
     pics_dir = os.path.join(abspath, "pics")
     os.makedirs(pics_dir, exist_ok=True)
@@ -120,6 +123,8 @@ def take_photo(frame):
 
     cv2.imwrite(filepath, frame)
     print(f"Foto guardada en: {filepath}")
+
+    is_blurry = check_blur(filepath)
 
 def toggle_fullscreen():
     global fullscreen, screen
@@ -243,6 +248,7 @@ while running:
             
         if photo_taken:
             draw_wrapped_text(f"Foto guardada en: {filepath}", win_w - 500, win_h // 2, 250)            
+            draw_text(f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*4)            
 
     else:
         draw_text("Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
