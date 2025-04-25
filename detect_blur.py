@@ -1,6 +1,6 @@
 import cv2
 
-THRESHOLD = 2000
+THRESHOLD = 299.12
 
 def variance_of_laplacian(image):
     """
