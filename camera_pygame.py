@@ -94,6 +94,21 @@ def draw_wrapped_text(text, x, y, max_width, color=(255, 255, 255)):
         text_surface = font.render(line, True, color)
         screen.blit(text_surface, (x, y + i * line_height))
 
+def flash_screen(color: tuple, duration: int=500, flashes: int=3) -> None:
+    """
+    Hace que la pantalla parpadee con un color especifico
+    """
+
+    interval = duration // (flashes * 2)
+    for _ in range(flashes):
+        screen.fill(color)
+        pygame.display.flip()
+        pygame.time.delay(interval)
+        pygame.display.flip()
+        screen.fill((32, 32, 32)) # color original de fondo
+        pygame.display.flip()
+        pygame.time.delay(interval)
+
 filepath = ''
 is_blurry = ''
 def take_photo(frame):
@@ -132,6 +147,12 @@ def take_photo(frame):
 
     is_blurry = check_blur(filepath)
 
+    if is_blurry:
+        flash_screen((139, 0, 0)) # rojo
+
+    else:
+        flash_screen((0, 128, 0))
+
 def toggle_fullscreen():
     global fullscreen, screen
     fullscreen = not fullscreen
@@ -142,6 +163,9 @@ def toggle_fullscreen():
         # screen = pygame.display.set_mode((1280, 720))
         screen = pygame.display.set_mode((800, 600))
         pygame.mouse.set_visible(True)
+
+def toggle_camera() -> None:
+    args["show"] = not args["show"]
 
 def set_rotation_angle():
     """
@@ -250,12 +274,13 @@ while running:
             # Controles
             draw_text("<p>: tomar una foto", 0, win_h // 2)
             draw_text("<q>: cerrar programa", 0, win_h // 2 + 20)
-            draw_text("<Esc>: fullscreen", 0, win_h // 2 + 20*2)
-            draw_text("<Arrow Keys>: rotar", 0, win_h // 2 + 20*3)
+            draw_text("<s>: mostrar camara", 0, win_h // 2 + 20*2)
+            draw_text("<Esc>: fullscreen", 0, win_h // 2 + 20*3)
+            draw_text("<Arrow Keys>: rotar", 0, win_h // 2 + 20*4)
             
         if photo_taken:
             draw_wrapped_text(f"Foto guardada en: {filepath}", win_w - 500, win_h // 2, 250)            
-            draw_text(f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*4)            
+            draw_text(f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)            
 
     else:
         draw_text("Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
@@ -285,6 +310,9 @@ while running:
 
             elif event.key == pygame.K_RIGHT:
                 rotation_angle = (rotation_angle + 90) % 360 # 90° a la derecha
+
+            elif event.key == pygame.K_s:
+                toggle_camera()
 
         if event.type == photo_taken_Event:
             pygame.time.set_timer(photo_taken_Event, 0)
