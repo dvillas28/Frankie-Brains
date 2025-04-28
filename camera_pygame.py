@@ -263,7 +263,7 @@ while running:
             if event.key == pygame.K_q:
                 running = False
             
-            elif event.key == pygame.K_p:
+            elif event.key == pygame.K_p and camera_found:
                 take_photo(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
                 photo_taken = True
                 pygame.time.set_timer(photo_taken_Event, 5000)
