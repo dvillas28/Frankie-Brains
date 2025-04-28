@@ -24,6 +24,12 @@ ap.add_argument("-o", "--orientation",
                 default="n",
                 type=str.lower)
 
+# Argumento para mostrar la camara
+ap.add_argument("-s", "--show",
+                required=False,
+                help="Mostrar camara. Valor default: False",
+                action="store_true")
+
 args = vars(ap.parse_args())
 
 # Inicializar pygame
@@ -137,14 +143,6 @@ def toggle_fullscreen():
         screen = pygame.display.set_mode((800, 600))
         pygame.mouse.set_visible(True)
 
-# Loop principal
-running = True
-camera_found = False
-cap = None
-
-photo_taken_Event = pygame.USEREVENT + 1
-photo_taken = False
-
 def set_rotation_angle():
     """
     Rotar el video en funcion de la orientacion actual de la camara
@@ -167,6 +165,14 @@ def set_rotation_angle():
             rot = (rot - 90) % 360
             
     return rot
+
+# Loop principal
+running = True
+camera_found = False
+cap = None
+
+photo_taken_Event = pygame.USEREVENT + 1
+photo_taken = False
 
 rotation_angle = set_rotation_angle()
 
@@ -209,27 +215,28 @@ while running:
             frame_h, frame_w = frame.shape[:2]
             win_w, win_h = screen.get_size()
 
-            # Escalar la imagen para que ocupe todo el ancho de la pantalla
-            bar_size = 250
-            target_w = win_w - (2 * bar_size)
-            target_h = win_h
+            if args["show"]:
+                # Escalar la imagen para que ocupe todo el ancho de la pantalla
+                bar_size = 250
+                target_w = win_w - (2 * bar_size)
+                target_h = win_h
 
-            # Escalar la imagen sin mantener la proporción
-            frame_surface = pygame.transform.scale(frame_surface, (target_w, target_h))
+                # Escalar la imagen sin mantener la proporción
+                frame_surface = pygame.transform.scale(frame_surface, (target_w, target_h))
 
-            # Aplicar rotación
-            frame_surface = pygame.transform.rotate(frame_surface, rotation_angle)
+                # Aplicar rotación
+                frame_surface = pygame.transform.rotate(frame_surface, rotation_angle)
 
-            # Calcular la posición para centrar la imagen
-            if rotation_angle in [90, 270]:
-                x_offset = (win_w - target_h) // 2
-                y_offset = (win_h - target_w) // 2
-            else:
-                x_offset = (win_w - target_w) // 2
-                y_offset = (win_h - target_h) // 2
+                # Calcular la posición para centrar la imagen
+                if rotation_angle in [90, 270]:
+                    x_offset = (win_w - target_h) // 2
+                    y_offset = (win_h - target_w) // 2
+                else:
+                    x_offset = (win_w - target_w) // 2
+                    y_offset = (win_h - target_h) // 2
 
-            # Dibujar la imagen en la pantalla
-            screen.blit(frame_surface, (x_offset, y_offset))
+                # Dibujar la imagen en la pantalla
+                screen.blit(frame_surface, (x_offset, y_offset))
 
             # Mostrar texto en los bordes grises
             # Mostrar la orientación predeterminada ingresada en consola
