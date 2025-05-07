@@ -47,3 +47,5 @@ COLOR_CONFIRM: tuple = (139, 0, 0)
 COLOR_REJECT: tuple = (0, 128, 0)
 
 FPS = 60
+
+BAR_SIZE = 250

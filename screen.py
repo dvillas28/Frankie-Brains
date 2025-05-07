@@ -6,7 +6,7 @@ Funciones que actuan sobre la pantalla
 import os
 import pygame as pg
 from pygame import Surface
-from config import args
+from config import args, BAR_SIZE
 
 font = None
 
@@ -85,8 +85,7 @@ def pygame_blit_surface(screen: Surface, frame_surface,
     Aplica transformaciones a la superficie pygame, para luego pegarla en la pantalla
     """
     # Escalar la imagen para que ocupe todo el ancho de la pantalla
-    bar_size = 250
-    target_w = window_width - (2 * bar_size)
+    target_w = window_width - (2 * BAR_SIZE)
     target_h = window_height
 
     # Escalar la imagen sin mantener la proporción
