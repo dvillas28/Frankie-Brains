@@ -77,3 +77,51 @@ def flash_screen(screen: Surface, color: tuple, duration: int=500, flashes: int=
         pg.display.flip()
         pg.time.delay(interval)
     
+
+def pygame_blit_surface(screen: Surface, frame_surface,
+                        window_width: int, window_height: int,
+                        rotation_angle: int) -> None:
+    """
+    Aplica transformaciones a la superficie pygame, para luego pegarla en la pantalla
+    """
+    # Escalar la imagen para que ocupe todo el ancho de la pantalla
+    bar_size = 250
+    target_w = window_width - (2 * bar_size)
+    target_h = window_height
+
+    # Escalar la imagen sin mantener la proporción
+    frame_surface = pg.transform.scale(frame_surface, (target_w, target_h))
+
+    # Aplicar rotación
+    frame_surface = pg.transform.rotate(frame_surface, rotation_angle)
+
+    # Calcular la posición para centrar la imagen
+    if rotation_angle in [90, 270]:
+        x_offset = (window_width - target_h) // 2
+        y_offset = (window_height - target_w) // 2
+    else:
+        x_offset = (window_width - target_w) // 2
+        y_offset = (window_height - target_h) // 2
+
+    # Dibujar la imagen en la pantalla
+    screen.blit(frame_surface, (x_offset, y_offset))
+    
+def draw_debug_menu(screen: Surface,
+                    window_width: int, window_heigth: int,
+                    rotation_angle: int) -> None:
+    """
+    Escribe textos del menu de debug
+    """
+
+    # Mostrar texto independiente de si estamos mostrando la camara
+    draw_text(False, screen, f"Orientación: {args['orientation'].upper()}", 0, 0)
+
+    # Mostrar la rotacion actual en base a la orientacion predeterminada
+    draw_text(False, screen, f"Rotación actual: {rotation_angle}°", 0, 20)
+                
+    # Controles
+    draw_text(False, screen, "<p>: tomar una foto", 0, window_heigth // 2)
+    draw_text(False, screen, "<q>: cerrar programa", 0, window_heigth // 2 + 20)
+    draw_text(False, screen, "<s>: mostrar camara", 0, window_heigth // 2 + 20*2)
+    draw_text(False, screen, "<Esc>: fullscreen", 0, window_heigth // 2 + 20*3)
+    draw_text(False, screen, "<Arrow Keys>: rotar", 0, window_heigth // 2 + 20*4)
