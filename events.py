@@ -9,7 +9,7 @@ import pygame as pg
 def handle_events(custom_events: dict) -> tuple[bool, str]:
     """
     Manejo de eventos
-    input: diccionario de eventos custom, si es que lso hay
+    input: diccionario de eventos custom, si es que lo hay
     return: bool que indica si el programa sigue corriendo y un string que indica la accion a tomar
     """
 
@@ -49,6 +49,9 @@ def keydown_events(event) -> tuple[bool, str]:
     
     elif event.key == pg.K_s:
         return True, 'toggle_camera'
+    
+    elif event.key == pg.K_d:
+        return True, 'toggle_debug_menu'
     
     elif event.key == pg.K_LEFT:
         return True, 'rotate_left'

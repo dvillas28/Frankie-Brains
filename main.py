@@ -20,6 +20,9 @@ def toggle_fullscreen(fullscreen: bool, screen_width: int, screen_height: int) -
 def toggle_camera() -> None:
     args["show"] = not args["show"]
 
+def toggle_debug_menu() -> None:
+    args["debug"] = not args["debug"]
+
 
 def main() -> None:
     pg.init()
@@ -101,24 +104,24 @@ def main() -> None:
                     screen.blit(frame_surface, (x_offset, y_offset))
 
                 # Mostrar texto independiente de si estamos mostrando la camara
-                draw_text(screen, f"Orientación: {args['orientation'].upper()}", 0, 0)
+                draw_text(False, screen, f"Orientación: {args['orientation'].upper()}", 0, 0)
 
                 # Mostrar la rotacion actual en base a la orientacion predeterminada
-                draw_text(screen, f"Rotación actual: {rotation_angle}°", 0, 20)
+                draw_text(False, screen, f"Rotación actual: {rotation_angle}°", 0, 20)
                 
                 # Controles
-                draw_text(screen, "<p>: tomar una foto", 0, win_h // 2)
-                draw_text(screen, "<q>: cerrar programa", 0, win_h // 2 + 20)
-                draw_text(screen, "<s>: mostrar camara", 0, win_h // 2 + 20*2)
-                draw_text(screen, "<Esc>: fullscreen", 0, win_h // 2 + 20*3)
-                draw_text(screen, "<Arrow Keys>: rotar", 0, win_h // 2 + 20*4)
+                draw_text(False, screen, "<p>: tomar una foto", 0, win_h // 2)
+                draw_text(False, screen, "<q>: cerrar programa", 0, win_h // 2 + 20)
+                draw_text(False, screen, "<s>: mostrar camara", 0, win_h // 2 + 20*2)
+                draw_text(False, screen, "<Esc>: fullscreen", 0, win_h // 2 + 20*3)
+                draw_text(False, screen, "<Arrow Keys>: rotar", 0, win_h // 2 + 20*4)
 
             if photo_taken:
-                draw_wrapped_text(screen, f"Foto guardada en: {filepath}", win_w - 500, win_h // 2, 250)            
-                draw_text(screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)     
+                draw_wrapped_text(True, screen, f"Foto guardada en: {filepath}", win_w - 500, win_h // 2, 250)            
+                draw_text(True, screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)     
 
         else:
-            draw_text(screen, "Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
+            draw_text(True, screen, "Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
         
         # Manejo de eventos
         running, action = handle_events(custom_events)
@@ -149,6 +152,9 @@ def main() -> None:
 
             case 'toggle_camera':
                 toggle_camera()
+
+            case 'toggle_debug_menu':
+                toggle_debug_menu()
 
             case 'rotate_left':
                 rotation_angle = (rotation_angle - 90) % 360 # 90° a la izquierda

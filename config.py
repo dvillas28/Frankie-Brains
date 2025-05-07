@@ -29,6 +29,12 @@ ap.add_argument("-s", "--show",
                 help="Mostrar camara. Valor default: False",
                 action="store_true")
 
+# Argumento para mostrar el modo debug del programa info de la pantalla
+ap.add_argument("-d", "--debug",
+                required=False,
+                help="Modo debug. Mostrar información de la pantalla (controles y variables). Valor default: False",
+                action="store_true")
+
 args = vars(ap.parse_args())
 
 
