@@ -106,6 +106,8 @@ def take_photo(frame) -> tuple[str, bool]:
     Procesar el frame de esa iteración.
     Guardarlo como una imagen .jpg y analizar su blur.
     """
+
+    o = args["orientation"].upper()
     
     abspath = os.path.dirname(os.path.realpath(__file__))
     pics_dir = os.path.join(abspath, "pics")
@@ -114,7 +116,7 @@ def take_photo(frame) -> tuple[str, bool]:
     frame = rotate_frame(frame)
 
     now = datetime.now()
-    filename = now.strftime("%Y_%m_%d-%H-%M-%S") + ".jpg"
+    filename = now.strftime("%Y_%m_%d-%H-%M-%S") + f"_{o}" + ".jpg"
     filepath = os.path.join(pics_dir, filename)
 
     cv2.imwrite(filepath, frame)
