@@ -1,3 +1,7 @@
+# detect_blur.py
+"""
+Funciones para analizar borrosidad de una imagen
+"""
 import cv2
 
 THRESHOLD = 299.12
