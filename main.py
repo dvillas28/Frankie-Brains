@@ -128,10 +128,10 @@ def main() -> None:
 
                     filepath, is_blurry = take_photo(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
                     if is_blurry:
-                        flash_screen(screen, color=COLOR_REJECT)
+                        flash_screen(screen, color=COLOR_CONFIRM)
 
                     else:
-                        flash_screen(screen, color=COLOR_CONFIRM)
+                        flash_screen(screen, color=COLOR_REJECT)
 
                     photo_taken = True
                     pg.time.set_timer(photo_taken_Event, 5000)
