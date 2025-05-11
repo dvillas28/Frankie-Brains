@@ -6,7 +6,7 @@ Funciones que actuan sobre la pantalla
 import os
 import pygame as pg
 from pygame import Surface
-from config import args, BAR_SIZE
+from config import args, BAR_SIZE, COLOR_BLACK
 
 font = None
 
@@ -17,7 +17,7 @@ def initialize_font():
     global font
     font = pg.font.SysFont("Consolas", 18)
 
-def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: tuple=(255,255,255)) -> None:
+def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: tuple=COLOR_BLACK) -> None:
     """
     Dibuja texto en la pantalla en la posicion (x, y).
     """
@@ -29,7 +29,7 @@ def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: t
 
     return
 
-def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, max_width: int, color: tuple=(255, 255, 255)) -> None:
+def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, max_width: int, color: tuple=COLOR_BLACK) -> None:
     """
     Dibuja texto en la pantalla con ajuste de línea (wrap) si es demasiado largo.
     """

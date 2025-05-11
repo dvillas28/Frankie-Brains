@@ -2,7 +2,7 @@ import pygame as pg
 from pygame import Surface
 import cv2
 
-from config import args, COLOR_BACKGROUND, COLOR_CONFIRM, COLOR_REJECT, FPS
+from config import args, COLOR_CONFIRM, COLOR_REJECT, FPS, CAMERA_NOT_FOUND_PATH, CAMERA_FOUND_PATH
 from camera import find_camera, initialize_camera, set_rotation_angle, take_photo
 from screen import (initialize_font,
                     draw_text,
@@ -42,6 +42,13 @@ def main() -> None:
     clock = pg.time.Clock()
     fullscreen: bool = True
 
+    # Carga de imagenes de fondo
+    camera_not_found_image = pg.image.load(CAMERA_NOT_FOUND_PATH)
+    camera_not_found_image = pg.transform.scale(camera_not_found_image, (screen_width, screen_height))
+    
+    camera_found_image = pg.image.load(CAMERA_FOUND_PATH)
+    camera_found_image = pg.transform.scale(camera_found_image, (screen_width, screen_height))
+
     # Variables para el loop principal
     running: bool = True
     camera_found: bool = False
@@ -72,7 +79,13 @@ def main() -> None:
                 cap = initialize_camera(camera_index)
                 camera_found = True
 
-        screen.fill(COLOR_BACKGROUND)
+        # screen.fill(COLOR_BACKGROUND)
+
+        # Mostrar imagen de fondo dependiendo del estado de la cámara
+        if camera_found:
+            screen.blit(camera_found_image, (0, 0))
+        else:
+            screen.blit(camera_not_found_image, (0, 0))
 
         # video()
         if camera_found and cap is not None:
@@ -97,10 +110,10 @@ def main() -> None:
             if photo_taken:
                 draw_wrapped_text(True, screen, f"Foto guardada en: {filepath}",
                                   win_w - 500, win_h // 2, 250)            
-                draw_text(True, screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)     
+                draw_text(False, screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)     
 
         else:
-            draw_text(True, screen, "Buscando cámara...",
+            draw_text(False, screen, "Buscando cámara...",
                       screen_width // 2 - 150, screen_height // 2)
         
         # Manejo de eventos
