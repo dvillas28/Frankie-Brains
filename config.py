@@ -43,15 +43,14 @@ args = vars(ap.parse_args())
 THRESHOLD: float = 299.12
 
 # Colores
-COLOR_BLACK: tuple = (0, 0, 0)
+COLOR_BLACK: tuple      = (0, 0, 0)
 COLOR_BACKGROUND: tuple = (32, 32, 32)
-COLOR_CONFIRM: tuple = (139, 0, 0)
-COLOR_REJECT: tuple = (0, 128, 0)
+COLOR_CONFIRM: tuple    = (139, 0, 0)   # Rojo
+COLOR_REJECT: tuple     = (0, 128, 0)   # Verde
 
-FPS: int = 60
-
+FPS: int      = 60
 BAR_SIZE: int = 250
 
 # Rutas de las imagenes
 CAMERA_NOT_FOUND_PATH: str = join("assets", "camera_not_found.jpg")
-CAMERA_FOUND_PATH: str = join("assets", "camera_found.jpg")
+CAMERA_FOUND_PATH: str     = join("assets", "camera_found.jpg")
