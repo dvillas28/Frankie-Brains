@@ -2,15 +2,15 @@ import pygame as pg
 from pygame import Surface
 import cv2
 
-from config import args, COLOR_CONFIRM, COLOR_REJECT, FPS, CAMERA_NOT_FOUND_PATH, CAMERA_FOUND_PATH
-from camera import find_camera, initialize_camera, set_rotation_angle, take_photo
-from screen import (initialize_font,
+from utils.config import args, COLOR_CONFIRM, COLOR_REJECT, FPS, CAMERA_NOT_FOUND_PATH, CAMERA_FOUND_PATH
+from utils.camera import find_camera, initialize_camera, set_rotation_angle, take_photo
+from utils.screen import (initialize_font,
                     draw_text,
                     draw_wrapped_text,
                     draw_debug_menu,
                     flash_screen,
                     pygame_blit_surface,)
-from events import handle_events
+from utils.events import handle_events
 
 def toggle_fullscreen(fullscreen: bool, screen_width: int, screen_height: int) -> Surface | bool:
     fullscreen = not fullscreen
