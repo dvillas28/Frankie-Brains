@@ -55,37 +55,63 @@ options:
 
 ### Controles
 
-- `<p>: tomar foto`
-- `<q>: cerrar programa`
-- `<s>: mostrar camara`
-- `<d>: modo debug`
-- `<Esc>: Fullscreen`
-- `<Arrow Keys>: Rotar video`
+- `<p>`: tomar foto
+- `<q>`: cerrar programa
+- `<s>`: mostrar camara
+- `<d>`: modo debug
+- `<Esc>`: Fullscreen
+- `<Arrow Keys>`: Rotar video
 
 ## [Opcional] Ejecución bajo comando
 
 *Ojo*: Se requieren que estén los botones USB conectados previamente y tener una instalación de `antimicrox`
 
 ```bash
-chmod +x start_pyCamera.sh             # Convertir script bash en ejecutable
-./start_pyCamera.sh                    # Ejecutar script (desde cualquier lugar)
+chmod +x start_pyCamera.sh             # convertir script bash en ejecutable
+./start_pyCamera.sh                    # ejecutar script (desde cualquier lugar)
 ```
 
 ### Ejecución global
+
+1. Crear un _symlink_ al ejecutable del repositorio
 
 ```bash
 mkdir -p ~/bin # crear un directorio de binarios de usuario (si no existe)
 ln -s /home/nombre_usuario/pyCamera/start_pyCamera.sh ~/bin/pycamera # crear un symlink al ejecutable original
 ```
 
-Luego se agrega el _symlink_ `pycamera` al `PATH`. Agregar esta linea al final de `~/.bashrc`
+2. Luego se agrega el _symlink_ `pycamera` al `PATH`. Agregar esta linea al final de `~/.bashrc`
 ```bash
 export PATH="$HOME/bin:$PATH"
 ```
 
-Y luego ejecutar
+3. Y luego ejecutar
 ```bash
 source ~/.bashrc
 ```
 
 ### Instrucciones para ejecutar en boot
+_Ojo_: Intrucciones compatibles solamente con X11
+
+Se asume que existe el ejecutable `pygame` creado en la sección anterior
+
+1. Crear un archivo `.desktop` con las configuraciones necesarias
+
+```bash
+mkdir -p ~/.config/autostart          # crear el directorio (si no existe)
+nano pycamera.desktop                 # crear archivo de para iniciar en el escritorio
+```
+
+2. El archivo `pycamera.desktop` debe contener:
+
+```txt
+[Desktop Entry]
+Type=Application
+Exec=/home/raspi5/bin/pycamera
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=Script de inicio de pyCamera
+Comment=Ejecuta pyCamera al inicio
+Terminal=true
+```
