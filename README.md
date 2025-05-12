@@ -62,4 +62,30 @@ options:
 - `<Esc>: Fullscreen`
 - `<Arrow Keys>: Rotar video`
 
-## [Opcional] Configurar programa para ejecuión en boot
+## [Opcional] Ejecución bajo comando
+
+*Ojo*: Se requieren que estén los botones USB conectados previamente y tener una instalación de `antimicrox`
+
+```bash
+chmod +x start_pyCamera.sh             # Convertir script bash en ejecutable
+./start_pyCamera.sh                    # Ejecutar script (desde cualquier lugar)
+```
+
+### Ejecución global
+
+```bash
+mkdir -p ~/bin # crear un directorio de binarios de usuario (si no existe)
+ln -s /home/nombre_usuario/pyCamera/start_pyCamera.sh ~/bin/pycamera # crear un symlink al ejecutable original
+```
+
+Luego se agrega el _symlink_ `pycamera` al `PATH`. Agregar esta linea al final de `~/.bashrc`
+```bash
+export PATH="$HOME/bin:$PATH"
+```
+
+Y luego ejecutar
+```bash
+source ~/.bashrc
+```
+
+### Instrucciones para ejecutar en boot
