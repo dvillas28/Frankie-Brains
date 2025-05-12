@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<joystick configversion="19" appversion="3.1.4">
+    <!--The SDL name for a joystick is included for informational purposes only.-->
+    <sdlname>DragonRise Inc. Generic USB Joystick</sdlname>
+    <!--The Unique ID for a joystick is included for informational purposes only.-->
+    <uniqueID>03002061790000000600000010010000</uniqueID>
+    <sets>
+        <set index="1">
+            <axis index="5">
+                <center_value>0</center_value>
+                <min_value>-32767</min_value>
+                <max_value>32767</max_value>
+                <throttle>normal</throttle>
+            </axis>
+            <axis index="3">
+                <center_value>0</center_value>
+                <min_value>-32767</min_value>
+                <max_value>32767</max_value>
+                <throttle>normal</throttle>
+            </axis>
+            <axis index="4">
+                <center_value>0</center_value>
+                <min_value>-32767</min_value>
+                <max_value>32767</max_value>
+                <throttle>normal</throttle>
+            </axis>
+            <axis index="1">
+                <center_value>0</center_value>
+                <min_value>-32767</min_value>
+                <max_value>32767</max_value>
+                <throttle>normal</throttle>
+            </axis>
+            <axis index="2">
+                <center_value>0</center_value>
+                <min_value>-32767</min_value>
+                <max_value>32767</max_value>
+                <throttle>normal</throttle>
+            </axis>
+            <button index="1">
+                <slots>
+                    <slot>
+                        <code>0x51</code>
+                        <mode>keyboard</mode>
+                    </slot>
+                </slots>
+            </button>
+            <button index="2">
+                <slots>
+                    <slot>
+                        <code>0x50</code>
+                        <mode>keyboard</mode>
+                    </slot>
+                </slots>
+            </button>
+        </set>
+    </sets>
+</joystick>
