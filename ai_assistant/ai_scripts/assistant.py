@@ -32,9 +32,9 @@ class Assistant(ABC):
         if os.path.exists(image_path):
             try:
                 base64_image = self.encode_image(image_path)
-                # response = self.make_request(self.prompt, base64_image)
+                response = self.make_request(self.prompt, base64_image)
                 
-                response = 'funciona?'
+                # response = 'funciona?'
 
                 print(response)
                 self.save_result(image_path, response)
