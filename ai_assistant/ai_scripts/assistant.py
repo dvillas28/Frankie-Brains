@@ -27,9 +27,23 @@ class Assistant(ABC):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode("utf-8")
 
-    @abstractmethod
-    def process_image(self, image_path: str):
-        pass
+    def process_image(self, image_path: str) -> None:
+
+        if os.path.exists(image_path):
+            try:
+                base64_image = self.encode_image(image_path)
+                # response = self.make_request(self.prompt, base64_image)
+                
+                response = 'funciona?'
+
+                print(response)
+                self.save_result(image_path, response)
+
+            except Exception as e:
+                print(f"Error al procesar la imagen {image_path}: {e}")
+
+        else:
+            print(f"La imagen {image_path} no existe")
     
     @abstractmethod
     def make_request(self, prompt: str, base64_image):
