@@ -3,3 +3,4 @@
 *pics/
 .env
 __pycache__/
+tests/
