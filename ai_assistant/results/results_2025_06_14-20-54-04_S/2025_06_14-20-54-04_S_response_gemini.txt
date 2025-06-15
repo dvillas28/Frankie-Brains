@@ -1,0 +1,4 @@
+👍 Lo que has logrado;¡Muy bien por usar párrafos para separar las ideas! Se nota que te esfuerzas por organizar la información.
+📝 Para mejorar la organización;Podrías usar conectores para que las ideas fluyan mejor. Por ejemplo, en lugar de solo decir "Value Hevsition asuve que es Posible", podrías escribir "Value Hevsition asume que es posible, *por lo tanto*,...".
+❓ Para reflexionar;¿Podrías agregar más detalles o ejemplos para explicar mejor las ideas sobre Q-Learning, como si le estuvieras explicando el tema a un compañero?
+✨ Mejorando correferencias;En lugar de repetir "Value Hevsition" al inicio de dos frases seguidas, podrías usar "Este método" o "Esta técnica" en la segunda frase para que el texto sea más fluido.

@@ -20,6 +20,12 @@ class Assistant(ABC):
     Límite: 150 palabras máximo 
     Tono: Positivo y adecuado para un estudiante de 13-14 años 
     Formato: Usa subtítulos e íconos para facilitar la lectura"
+    Formato de salida: Debes entregar 1 linea en el siguiente formato:
+        👍 Lo que has logrado;[contenido]
+        📝 Para mejorar la organizacion;[contenido]
+        ❓ Para reflexionar;[contenido]
+        ✨ Lo que has logrado;[contenido]
+    Entrega solamente esa linea, nada mas, nada menos.
     """
     
     # Function to encode the image
@@ -27,23 +33,40 @@ class Assistant(ABC):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode("utf-8")
 
-    def process_image(self, image_path: str) -> None:
+    def process_image(self, image_path: str) -> dict:
 
         if os.path.exists(image_path):
             try:
-                base64_image = self.encode_image(image_path)
+                base64_image = self.encode_image(image_path)                
                 response = self.make_request(self.prompt, base64_image)
                 
                 # response = 'funciona?'
 
                 print(response)
                 self.save_result(image_path, response)
+                response_list = self.format_response(response)
+    
+                return {
+                    "valid": True,
+                    "result": response_list
+                }
+                                
 
             except Exception as e:
                 print(f"Error al procesar la imagen {image_path}: {e}")
+                return {
+                    "valid": False,
+                    "result": "Ha ocurrido un error al procesar la imagen"
+                }
+                # return "Ha ocurrido un error al procesar la imagen", False
 
         else:
             print(f"La imagen {image_path} no existe")
+            return {
+                "valid": False,
+                "result": "La imagen no se guardo correctamente"
+            }
+            # return "La imagen no se guardo correctamente", False
     
     @abstractmethod
     def make_request(self, prompt: str, base64_image):
@@ -66,3 +89,11 @@ class Assistant(ABC):
             file.write(response)
 
         print(f"Response guardado en: {result_file_path}")
+
+    def format_response(self, response: str) -> list[list[str]]:
+        lista = response.strip().split("\n")
+
+        for i in range(len(lista)):
+            lista[i] = lista[i].strip().split(";")
+
+        return lista

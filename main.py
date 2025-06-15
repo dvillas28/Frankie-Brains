@@ -1,3 +1,6 @@
+import os
+from threading import Thread
+from dotenv import load_dotenv
 import pygame as pg
 from pygame import Surface
 import cv2
@@ -11,6 +14,14 @@ from utils.screen import (initialize_font,
                     flash_screen,
                     pygame_blit_surface,)
 from utils.events import handle_events
+from ai_assistant.ai_scripts.assistant_gemini import Gemini
+
+load_dotenv()
+
+gemini = Gemini(
+    name='gemini',
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 
 def toggle_fullscreen(fullscreen: bool, screen_width: int, screen_height: int) -> Surface | bool:
     fullscreen = not fullscreen
@@ -67,6 +78,15 @@ def main() -> None:
     filepath: str = ''
     is_blurry: bool = ''
 
+    processing: bool = False
+    result_gemini: dict = dict()
+
+    def process_image_thread(filepath: str) -> None:
+        nonlocal result_gemini, processing
+        processing = True
+        result_gemini = gemini.process_image(filepath)
+        processing = False
+
     # Accion a tomar luego de un evento
     action: str = ''
 
@@ -108,10 +128,21 @@ def main() -> None:
                 draw_debug_menu(screen, win_w, win_h, rotation_angle)
 
             if photo_taken:
-                draw_wrapped_text(True, screen, f"Foto guardada en: {filepath}",
-                                  win_w - 500, win_h // 2, 250)            
-                draw_text(False, screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)     
+                # draw_wrapped_text(True, screen, f"Foto guardada en: {filepath}",
+                #                   win_w - 500, win_h // 2, 250)            
+                draw_text(False, screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)
 
+            if processing:
+                draw_text(True, screen, "Cargando...", win_w // 2 - 50, win_h // 2)     
+
+            if not processing and result_gemini:
+                if result_gemini["valid"]:
+                    for i, item in enumerate(result_gemini["result"]):
+                        title, message = item
+                        draw_text(True, screen, title, 10, 10 + i * 60)  # Parte superior izquierda
+                        draw_wrapped_text(True, screen, message, 10, 30 + i * 60, 400)  # Ajustar debajo del título
+                else:
+                    draw_text(True, screen, result_gemini["result"], win_w // 2 - 50, win_h // 2)     
         else:
             draw_text(False, screen, "Buscando cámara...",
                       screen_width // 2 - 150, screen_height // 2)
@@ -127,12 +158,12 @@ def main() -> None:
                 if camera_found:
 
                     filepath, is_blurry = take_photo(cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
-                    if is_blurry:
-                        flash_screen(screen, color=COLOR_CONFIRM)
+                    
+                    if not is_blurry:
+                        th = Thread(target=process_image_thread, args=(filepath,))
+                        th.start()
 
-                    else:
-                        flash_screen(screen, color=COLOR_REJECT)
-
+                    flash_screen(screen, color=COLOR_CONFIRM if is_blurry else COLOR_REJECT)
                     photo_taken = True
                     pg.time.set_timer(photo_taken_Event, 5000)
 
