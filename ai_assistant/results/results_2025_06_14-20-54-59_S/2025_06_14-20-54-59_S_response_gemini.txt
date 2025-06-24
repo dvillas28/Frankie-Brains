@@ -1,0 +1,4 @@
+👍 Lo que has logrado;¡Muy bien por diferenciar visualmente las ideas con viñetas! Esto ayuda a organizar la información.
+📝 Para mejorar la organizacion;Podrías usar conectores para mostrar la relación entre ideas. Por ejemplo, en vez de solo listar "Nuevos canales de comunicación con 'soveres'. + oportunidades para atraer y retener", podrías decir "Nuevos canales de comunicación con 'soveres', *lo que genera* oportunidades para atraer y retener".
+❓ Para reflexionar;¿Podrías agrupar las ideas bajo temas más generales, creando párrafos temáticos?
+✨ Mejorando correferencias;En vez de repetir "cliente" varias veces, podrías usar sinónimos como "usuario" o "consumidor" para evitar la repetición. Por ejemplo, podrías decir "Relaciones con clientes: Usuario (joven)... El *usuario* tiene un sistema de feedback integrado en la APP".
