@@ -1,6 +1,33 @@
-# pyCamera
+# FRANKIE Brains
 
-Daniel Villaseñor C.
+Software de camara con integración IA. Por Daniel Villaseñor C durante 2025-1.
+
+## `.env`
+
+Primero es necesario definir algunas variables de entorno en un archivo `.env`
+
+```bash
+OPENAI_API_KEY="" # Si se esta ocupando el asistente GPT
+GEMINI_API_KEY="" # Si se esta ocupando el asistente gemini
+
+DEBUG_FONT=""
+RESULTS_FONT=""
+```
+
+### _Fonts_ recomendadas
+
+- Para el modo debug, se recomienda utilizar `Consolas`
+- Para mostrar los resultados, se recomienda utilizar
+  - `Segoe UI Emoji`: _font_ nativa para si se esta desarrollando en Windows
+  - `Noto Color Emoji`: _font_ alternativa para Linux. Se tiene que instalar
+
+```bash
+# Instalación en distribuciones basadas en Debian/Ubuntu
+sudo apt install fonts-noto-color-emoji
+
+# Luego en .env se debe incluir el path donde fue instalada la font
+RESULTS_FONT = "/usr/share/fonts/noto/NotoColorEmoji.ttf"
+```
 
 ## _Features_
 
@@ -53,7 +80,7 @@ options:
                         False
 ```
 
-### Controles
+### Controles para el modo debug
 
 - `<p>`: tomar foto
 - `<q>`: cerrar programa
@@ -62,9 +89,9 @@ options:
 - `<Esc>`: Fullscreen
 - `<Arrow Keys>`: Rotar video
 
-## [Opcional] Ejecución bajo comando
+## [Opcional] [Linux Only] Ejecución bajo comando
 
-*Ojo*: Se requieren que estén los botones USB conectados previamente y tener una instalación de `antimicrox`
+_Ojo_: Se requieren que estén los botones USB conectados previamente y tener una instalación de `antimicrox`
 
 ```bash
 chmod +x start_pyCamera.sh             # convertir script bash en ejecutable
@@ -77,23 +104,26 @@ chmod +x start_pyCamera.sh             # convertir script bash en ejecutable
 
 ```bash
 mkdir -p ~/bin # crear un directorio de binarios de usuario (si no existe)
-ln -s /home/nombre_usuario/pyCamera/start_pyCamera.sh ~/bin/pycamera # crear un symlink al ejecutable original
+ln -s /home/nombre_usuario/pyCamera/start_pyCamera.sh ~/bin/pycamera # crear un symlink (pycamera) al ejecutable original
 ```
 
 2. Luego se agrega el _symlink_ `pycamera` al `PATH`. Agregar esta linea al final de `~/.bashrc`
+
 ```bash
 export PATH="$HOME/bin:$PATH"
 ```
 
 3. Y luego ejecutar
+
 ```bash
 source ~/.bashrc
 ```
 
 ### Instrucciones para ejecutar en boot
+
 _Ojo_: Intrucciones compatibles solamente con X11
 
-Se asume que existe el ejecutable `pygame` creado en la sección anterior
+Se asume que existe el ejecutable `start_pyCamera.sh` creado en la sección anterior
 
 1. Crear un archivo `.desktop` con las configuraciones necesarias
 
