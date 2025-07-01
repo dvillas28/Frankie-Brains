@@ -17,7 +17,7 @@ gemini = Gemini(
 
 if __name__=="__main__":
     BASE_PATH = os.path.join("motion_blur", "dataset_Respuestas_estudiantes_PRAC", "orig")
-    image_path = os.path.join(BASE_PATH, "IMG_0017.jpg")
+    image_path = os.path.join(BASE_PATH, "IMG_0005.jpg")
     
-    # gpt.process_image(image_path)
+    gpt.process_image(image_path)
     gemini.process_image(image_path)

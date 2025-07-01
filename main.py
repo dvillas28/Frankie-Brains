@@ -5,18 +5,19 @@ import pygame as pg
 from pygame import Surface
 import cv2
 
+load_dotenv()
+
 from utils.config import args, COLOR_CONFIRM, COLOR_REJECT, FPS, CAMERA_NOT_FOUND_PATH, CAMERA_FOUND_PATH
 from utils.camera import find_camera, initialize_camera, set_rotation_angle, take_photo
 from utils.screen import (initialize_font,
                     draw_text,
-                    draw_wrapped_text,
+                    draw_list_items,
                     draw_debug_menu,
                     flash_screen,
                     pygame_blit_surface,)
 from utils.events import handle_events
 from ai_assistant.ai_scripts.assistant_gemini import Gemini
 
-load_dotenv()
 
 gemini = Gemini(
     name='gemini',
@@ -132,17 +133,29 @@ def main() -> None:
                 #                   win_w - 500, win_h // 2, 250)            
                 draw_text(False, screen, f"Borrosa?: {is_blurry}", 0, win_h // 2 + 20*5)
 
+            # Mostrar si se esta procesando un llamado
             if processing:
                 draw_text(True, screen, "Cargando...", win_w // 2 - 50, win_h // 2)     
 
+            # Mostrar si el resultado ya fue procesado y esta listo
             if not processing and result_gemini:
+                
+                # Dibujar un cuadrado donde irán los resultados 
+                rect_width, rect_height = screen_width - 200, screen_height - 200
+                rect_x, rect_y = 100, 100
+                rect_color = (128, 128, 128)
+
+                pg.draw.rect(screen, rect_color, (rect_x, rect_y, rect_width, rect_height))
+
+                # Rectangulo para el texto
+                rect = pg.Rect(rect_x, rect_y, rect_width, rect_height)
+
+                
                 if result_gemini["valid"]:
-                    for i, item in enumerate(result_gemini["result"]):
-                        title, message = item
-                        draw_text(True, screen, title, 10, 10 + i * 60)  # Parte superior izquierda
-                        draw_wrapped_text(True, screen, message, 10, 30 + i * 60, 400)  # Ajustar debajo del título
+                    draw_list_items(screen, result_gemini['result'], rect, font_size=30, title_color=(255, 255, 255), message_color=(200, 200, 200))
+                
                 else:
-                    draw_text(True, screen, result_gemini["result"], win_w // 2 - 50, win_h // 2)     
+                    draw_list_items(screen,  [["Error", "Hubo un error con la API"]], rect, font_size=24, title_color=(255, 255, 255), message_color=(200, 200, 200))
         else:
             draw_text(False, screen, "Buscando cámara...",
                       screen_width // 2 - 150, screen_height // 2)

@@ -15,7 +15,7 @@ def initialize_font():
     La font debe ser inicializada despues de ejecutar pg.init().
     """
     global font
-    font = pg.font.SysFont("Consolas", 18)
+    font = pg.font.SysFont(os.getenv("DEBUG_FONT"), 18)
 
 def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: tuple=COLOR_BLACK) -> None:
     """
@@ -28,6 +28,54 @@ def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: t
         screen.blit(text_surface, (x, y))
 
     return
+
+def draw_centered_text(screen: Surface, text: str, rect: pg.Rect, font_size: int, color: tuple) -> None:
+    """
+    Dibuja texto centrado dentro de un rectángulo en la pantalla.
+    """
+    font = pg.font.SysFont(os.getenv("DEBUG_FONT"), font_size)
+    text_surface = font.render(text, True, color)
+    text_rect = text_surface.get_rect(center=rect.center)
+    screen.blit(text_surface, text_rect)
+
+def draw_list_items(screen: Surface, items: list, rect: pg.Rect, font_size: int, title_color: tuple, message_color: tuple) -> None:
+    """
+    Dibuja una lista de elementos (título y mensaje) dentro de un rectángulo en la pantalla.
+    """
+    font_title = pg.font.SysFont(os.getenv("RESULTS_FONT"), font_size)
+    font_message = pg.font.SysFont(os.getenv("RESULTS_FONT"), font_size - 4)  # Mensaje con fuente más pequeña
+
+    # Margen interno dentro del rectángulo
+    padding = 20
+    x, y = rect.x + padding, rect.y + padding
+
+    max_width = rect.width - (2 * padding) # ancho máximo
+
+    for title, message in items:
+        # Renderizar el título
+        title_surface = font_title.render(title, True, title_color)
+        screen.blit(title_surface, (x, y))
+        y += font_title.get_height() + 10  # Espacio entre título y mensaje
+
+        # Dividir el mensaje en líneas si excede los 150 caracteres
+        words = message.split(' ')
+        current_line = ""
+        for word in words:
+            test_line = f"{current_line} {word}".strip()
+            if font_message.size(test_line)[0] <= max_width:
+                current_line = test_line
+            else:
+                # Renderizar la línea actual y comenzar una nueva
+                message_surface = font_message.render(current_line, True, message_color)
+                screen.blit(message_surface, (x, y))
+                y += font_message.get_height() + 5
+                current_line = word
+
+        # Renderizar la última línea
+        if current_line:
+            message_surface = font_message.render(current_line, True, message_color)
+            screen.blit(message_surface, (x, y))
+            y += font_message.get_height() + 20  # Espacio entre elementos
 
 def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, max_width: int, color: tuple=COLOR_BLACK) -> None:
     """

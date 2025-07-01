@@ -1,4 +1,5 @@
 from ai_assistant.ai_scripts.assistant import Assistant
+# from assistant import Assistant
 from google import genai
 from google.genai import types
 
