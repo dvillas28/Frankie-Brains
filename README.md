@@ -2,44 +2,25 @@
 
 Software de camara con integración IA. Por Daniel Villaseñor C durante 2025-1.
 
-## `.env`
+## [Linux Only] Instalación de fonts utilizadas
 
-Primero es necesario definir algunas variables de entorno en un archivo `.env`
-
-```bash
-OPENAI_API_KEY="" # Si se esta ocupando el asistente GPT
-GEMINI_API_KEY="" # Si se esta ocupando el asistente gemini
-
-DEBUG_FONT=""
-RESULTS_FONT=""
-```
-
-### _Fonts_ recomendadas
-
-- Para el modo debug, se recomienda utilizar `Consolas`
-- Para mostrar los resultados, se recomienda utilizar
-  - `Segoe UI Emoji`: _font_ nativa para si se esta desarrollando en Windows
-  - `Noto Color Emoji`: _font_ alternativa para Linux. Se tiene que instalar
-
-```bash
-# Instalación en distribuciones basadas en Debian/Ubuntu
-sudo apt install fonts-noto-color-emoji
-
-# Luego en .env se debe incluir el path donde fue instalada la font
-RESULTS_FONT = "/usr/share/fonts/noto/NotoColorEmoji.ttf"
-```
-
-## _Features_
-
-- Si al capturar la imagen, se muestra un _flasheo_ rojo, indicando que esta salio borrosa
-- Si al capturar la imagen, se muestra un _flasheo_ verde, indicando que esta salio nitída
+Este programa utiliza la fuente `Segoe UI Emoji` para mostrar resultados. Esta se encuentra de forma nativa en Windows. En Linux, se puede descargar de [esta repo](https://github.com/mrbvrz/segoe-ui-linux#)
 
 ## Instalación
 
 Es necesaria tener una instalación previa de Python `3.11.X` o superior.
 Primero, clonar este repositorio y hacer `cd` en la carpeta creada.
 
-### Linux
+### `.env`
+
+Primero es necesario definir algunas variables de entorno en un archivo `.env`
+
+```bash
+OPENAI_API_KEY="" # Si se esta ocupando el asistente GPT
+GEMINI_API_KEY="" # Si se esta ocupando el asistente gemini
+```
+
+### Linux - Activación del entorno
 
 ```bash
 python3 -m venv .venv                   # crear entorno
@@ -47,7 +28,7 @@ source .venv/bin/activate               # activar entorno
 pip install -r requirements.txt         # instalacion dependencias
 ```
 
-### Windows
+### Windows - Activación del entorno
 
 ```powershell
 py -m venv .venv                        # crear entorno

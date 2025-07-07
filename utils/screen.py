@@ -6,7 +6,7 @@ Funciones que actuan sobre la pantalla
 import os
 import pygame as pg
 from pygame import Surface
-from utils.config import args, BAR_SIZE, COLOR_BLACK
+from utils.config import args, BAR_SIZE, COLOR_BLACK, DEBUG_FONT, RESULTS_FONT
 
 font = None
 
@@ -15,7 +15,7 @@ def initialize_font():
     La font debe ser inicializada despues de ejecutar pg.init().
     """
     global font
-    font = pg.font.SysFont(os.getenv("DEBUG_FONT"), 18)
+    font = pg.font.SysFont(DEBUG_FONT, 18)
 
 def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: tuple=COLOR_BLACK) -> None:
     """
@@ -33,7 +33,7 @@ def draw_centered_text(screen: Surface, text: str, rect: pg.Rect, font_size: int
     """
     Dibuja texto centrado dentro de un rectángulo en la pantalla.
     """
-    font = pg.font.SysFont(os.getenv("DEBUG_FONT"), font_size)
+    font = pg.font.SysFont(DEBUG_FONT, font_size)
     text_surface = font.render(text, True, color)
     text_rect = text_surface.get_rect(center=rect.center)
     screen.blit(text_surface, text_rect)
@@ -42,8 +42,8 @@ def draw_list_items(screen: Surface, items: list, rect: pg.Rect, font_size: int,
     """
     Dibuja una lista de elementos (título y mensaje) dentro de un rectángulo en la pantalla.
     """
-    font_title = pg.font.SysFont(os.getenv("RESULTS_FONT"), font_size)
-    font_message = pg.font.SysFont(os.getenv("RESULTS_FONT"), font_size - 4)  # Mensaje con fuente más pequeña
+    font_title = pg.font.SysFont(RESULTS_FONT, font_size)
+    font_message = pg.font.SysFont(RESULTS_FONT, font_size - 4)  # Mensaje con fuente más pequeña
 
     # Margen interno dentro del rectángulo
     padding = 20

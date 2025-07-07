@@ -55,3 +55,6 @@ BAR_SIZE: int = 250
 BASE_DIR = dirname(abspath(__file__)).replace("utils", "")
 CAMERA_NOT_FOUND_PATH: str = join(f"{BASE_DIR}", "assets", "camera_not_found.jpg")
 CAMERA_FOUND_PATH: str     = join(f"{BASE_DIR}", "assets", "camera_found.jpg")
+
+DEBUG_FONT="Consolas"
+RESULTS_FONT="Segoe UI Emoji"
