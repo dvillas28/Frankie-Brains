@@ -1,6 +1,9 @@
 #!/bin/bash
 
-PROJECT_DIR="/home/raspi5/pyCamera"
+# El nombre 'pyCamera' viene del nombre antiguo del proyecto y es el nombre del directorio actualmente
+# en la Raspi. 
+# TODO: Cambiar a 'Frankie-Brains' cuando sea necesario (crear nuevamente el ejecutable y la ejecución en boot)
+PROJECT_DIR="/home/$USER/pyCamera"
 
 # Activar entorno virtual
 source "$PROJECT_DIR/.venv/bin/activate"

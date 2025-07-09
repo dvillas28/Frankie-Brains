@@ -42,8 +42,7 @@ class Assistant(ABC):
                 
                 # response = '👍 Lo que has logrado;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n📝 Para mejorar la organización;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n❓ Para reflexionar;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n✨ Mejorando correferencias;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
 
-                # print(response)
-                self.save_result(image_path, response)
+                # self.save_result(image_path, response)
                 response_list = self.format_response(response)
     
                 return {
@@ -58,15 +57,13 @@ class Assistant(ABC):
                     "valid": False,
                     "result": "Ha ocurrido un error en la API al procesar la imagen"
                 }
-                # return "Ha ocurrido un error al procesar la imagen", False
 
         else:
             print(f"La imagen {image_path} no existe")
             return {
                 "valid": False,
-                "result": "La imagen no se guardo correctamente"
+                "result": "La imagen tomada no se guardo correctamente"
             }
-            # return "La imagen no se guardo correctamente", False
     
     @abstractmethod
     def make_request(self, prompt: str, base64_image):
