@@ -8,6 +8,7 @@ import cv2
 load_dotenv()
 
 from utils.config import args, COLOR_CONFIRM, COLOR_REJECT, FPS, CAMERA_NOT_FOUND_PATH, CAMERA_FOUND_PATH
+from utils.internet import connected_to_internet
 from utils.camera import find_camera, initialize_camera, set_rotation_angle, take_photo
 from utils.screen import (initialize_font,
                     draw_text,
@@ -19,8 +20,8 @@ from utils.events import handle_events
 from ai_assistant.ai_scripts.assistant_gemini import Gemini
 
 
-gemini = Gemini(
-    name='gemini',
+assistant = Gemini(
+    name='assistant',
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
@@ -61,10 +62,13 @@ def main() -> None:
     camera_found_image = pg.image.load(CAMERA_FOUND_PATH)
     camera_found_image = pg.transform.scale(camera_found_image, (screen_width, screen_height))
 
+    # TODO: Imagen de no conexión a internet
+
     # Variables para el loop principal
     running: bool = True
     camera_found: bool = False
     cap = None # objeto de la camara
+    internet_connection: bool = False
 
     # Eventos
     custom_events = dict()
@@ -80,12 +84,12 @@ def main() -> None:
     is_blurry: bool = ''
 
     processing: bool = False
-    result_gemini: dict = dict()
+    result: dict = dict()
 
     def process_image_thread(filepath: str) -> None:
-        nonlocal result_gemini, processing
+        nonlocal result, processing
         processing = True
-        result_gemini = gemini.process_image(filepath)
+        result = assistant.process_image(filepath)
         processing = False
 
     # Accion a tomar luego de un evento
@@ -100,16 +104,18 @@ def main() -> None:
                 cap = initialize_camera(camera_index)
                 camera_found = True
 
-        # screen.fill(COLOR_BACKGROUND)
+        if not internet_connection:
+            internet_connection = connected_to_internet()
 
         # Mostrar imagen de fondo dependiendo del estado de la cámara
-        if camera_found:
+        # TODO: Mostrar imagen cuando no haya conexión a internet
+        if camera_found and internet_connection:
             screen.blit(camera_found_image, (0, 0))
         else:
             screen.blit(camera_not_found_image, (0, 0))
 
         # video()
-        if camera_found and cap is not None:
+        if camera_found and cap is not None and internet_connection:
             ret, frame = cap.read()
             if ret:
                 
@@ -138,7 +144,7 @@ def main() -> None:
                 draw_text(True, screen, "Cargando...", win_w // 2 - 50, win_h // 2)     
 
             # Mostrar si el resultado ya fue procesado y esta listo
-            if not processing and result_gemini:
+            if not processing and result:
                 
                 # Dibujar un cuadrado donde irán los resultados 
                 rect_width, rect_height = screen_width - 200, screen_height - 200
@@ -151,17 +157,20 @@ def main() -> None:
                 rect = pg.Rect(rect_x, rect_y, rect_width, rect_height)
 
                 
-                if result_gemini["valid"]:
-                    draw_list_items(screen, result_gemini['result'], rect, font_size=30, title_color=(255, 255, 255), message_color=(200, 200, 200))
+                if result["valid"]:
+                    draw_list_items(screen, result['result'], rect, font_size=30, title_color=(255, 255, 255), message_color=(200, 200, 200))
                 
                 else:
                     draw_list_items(screen,  [["Error", "Hubo un error con la API"]], rect, font_size=24, title_color=(255, 255, 255), message_color=(200, 200, 200))
         else:
-            draw_text(False, screen, "Buscando cámara...",
-                      screen_width // 2 - 150, screen_height // 2)
+            if not(camera_found and cap is not None):
+                draw_text(True, screen, "Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
+
+            elif not internet_connection:
+                draw_text(True, screen, "No hay conexión a Internet", screen_width // 2 - 150, screen_height // 2)
         
         # Manejo de eventos
-        running, action = handle_events(custom_events)
+        running, action = handle_events(custom_events, result)
         match action:
             case '':
                 # no hacer nada
@@ -180,6 +189,10 @@ def main() -> None:
                     photo_taken = True
                     pg.time.set_timer(photo_taken_Event, 5000)
 
+            case 'clear_result':
+                result = dict()
+                photo_taken = False
+            
             case 'photo_taken':
                 pg.time.set_timer(photo_taken_Event, 0)
                 photo_taken = False

@@ -6,7 +6,7 @@ Manejo de eventos
 
 import pygame as pg
 
-def handle_events(custom_events: dict) -> tuple[bool, str]:
+def handle_events(custom_events: dict, result: dict) -> tuple[bool, str]:
     """
     Manejo de eventos
     input: diccionario de eventos custom, si es que lo hay
@@ -21,7 +21,7 @@ def handle_events(custom_events: dict) -> tuple[bool, str]:
         
         # Keydown events
         elif event.type == pg.KEYDOWN:
-            return keydown_events(event)
+            return keydown_events(event, result)
         
         elif event.type == custom_events["photo_taken_Event"]:
             return True, 'photo_taken'
@@ -30,7 +30,7 @@ def handle_events(custom_events: dict) -> tuple[bool, str]:
 
     
 
-def keydown_events(event) -> tuple[bool, str]:
+def keydown_events(event, result: dict) -> tuple[bool, str]:
     """
     Manejo de eventos al presionar una tecla
     """
@@ -39,6 +39,10 @@ def keydown_events(event) -> tuple[bool, str]:
     if event.key == pg.K_q:
         return False, ''
     
+    # Si hay resultado y se presiona p, limpiar resultado
+    if event.key == pg.K_p and result:
+        return True, 'clear_result'
+
     # probar a tomar una foto al presionar q
     elif event.key == pg.K_p:
         return True, 'try_to_take_photo'
