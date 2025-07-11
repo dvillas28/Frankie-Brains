@@ -7,10 +7,19 @@ import cv2
 
 load_dotenv()
 
-from utils.config import args, COLOR_CONFIRM, COLOR_REJECT, FPS, CAMERA_NOT_FOUND_PATH, CAMERA_FOUND_PATH
+from utils.config import (
+                    args, 
+                    COLOR_CONFIRM, 
+                    COLOR_REJECT,
+                    FPS,
+                    NOTFOUND_NOINTERNET,
+                    NOTFOUND_INTERNET,
+                    FOUND_NOINTERNET,
+                    FOUND_INTERNET)
 from utils.internet import connected_to_internet
 from utils.camera import find_camera, initialize_camera, set_rotation_angle, take_photo
-from utils.screen import (initialize_font,
+from utils.screen import (
+                    initialize_font,
                     draw_text,
                     draw_list_items,
                     draw_debug_menu,
@@ -56,13 +65,17 @@ def main() -> None:
     fullscreen: bool = True
 
     # Carga de imagenes de fondo
-    camera_not_found_image = pg.image.load(CAMERA_NOT_FOUND_PATH)
-    camera_not_found_image = pg.transform.scale(camera_not_found_image, (screen_width, screen_height))
-    
-    camera_found_image = pg.image.load(CAMERA_FOUND_PATH)
-    camera_found_image = pg.transform.scale(camera_found_image, (screen_width, screen_height))
+    notfound_nointernet = pg.image.load(NOTFOUND_NOINTERNET)
+    notfound_nointernet = pg.transform.scale(notfound_nointernet, (screen_width, screen_height))
 
-    # TODO: Imagen de no conexión a internet
+    notfound_internet = pg.image.load(NOTFOUND_INTERNET)
+    notfound_internet = pg.transform.scale(notfound_internet, (screen_width, screen_height))
+
+    found_nointernet = pg.image.load(FOUND_NOINTERNET)
+    found_nointernet = pg.transform.scale(found_nointernet, (screen_width, screen_height))
+
+    found_internet = pg.image.load(FOUND_INTERNET)
+    found_internet = pg.transform.scale(found_internet, (screen_width, screen_height))
 
     # Variables para el loop principal
     running: bool = True
@@ -104,15 +117,23 @@ def main() -> None:
                 cap = initialize_camera(camera_index)
                 camera_found = True
 
+        # search_for_internet()
         if not internet_connection:
             internet_connection = connected_to_internet()
 
         # Mostrar imagen de fondo dependiendo del estado de la cámara
-        # TODO: Mostrar imagen cuando no haya conexión a internet
-        if camera_found and internet_connection:
-            screen.blit(camera_found_image, (0, 0))
+
+        if not camera_found and not internet_connection:
+            screen.blit(notfound_nointernet, (0, 0))
+
+        elif not camera_found and internet_connection:
+            screen.blit(notfound_internet, (0, 0))
+
+        elif camera_found and not internet_connection:
+            screen.blit(found_nointernet, (0, 0))
+
         else:
-            screen.blit(camera_not_found_image, (0, 0))
+            screen.blit(found_internet, (0, 0))
 
         # video()
         if camera_found and cap is not None and internet_connection:
@@ -164,10 +185,10 @@ def main() -> None:
                     draw_list_items(screen,  [["Error", "Hubo un error con la API"]], rect, font_size=24, title_color=(255, 255, 255), message_color=(200, 200, 200))
         else:
             if not(camera_found and cap is not None):
-                draw_text(True, screen, "Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
+                draw_text(False, screen, "Buscando cámara...", screen_width // 2 - 150, screen_height // 2)
 
             elif not internet_connection:
-                draw_text(True, screen, "No hay conexión a Internet", screen_width // 2 - 150, screen_height // 2)
+                draw_text(False, screen, "No hay conexión a Internet", screen_width // 2 - 150, screen_height // 2)
         
         # Manejo de eventos
         running, action = handle_events(custom_events, result)

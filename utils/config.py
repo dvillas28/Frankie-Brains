@@ -53,8 +53,10 @@ BAR_SIZE: int = 250
 
 # Rutas de las imagenes
 BASE_DIR = dirname(abspath(__file__)).replace("utils", "")
-CAMERA_NOT_FOUND_PATH: str = join(f"{BASE_DIR}", "assets", "camera_not_found.jpg")
-CAMERA_FOUND_PATH: str     = join(f"{BASE_DIR}", "assets", "camera_found.jpg")
+NOTFOUND_NOINTERNET: str = join(f"{BASE_DIR}", "assets", "notfound_nointernet.jpg")
+NOTFOUND_INTERNET: str = join(f"{BASE_DIR}", "assets", "notfound_internet.jpg")
+FOUND_NOINTERNET: str = join(f"{BASE_DIR}", "assets", "found_nointernet.jpg")
+FOUND_INTERNET: str = join(f"{BASE_DIR}", "assets", "found_internet.jpg")
 
 DEBUG_FONT="Consolas"
 RESULTS_FONT="Segoe UI Emoji"
