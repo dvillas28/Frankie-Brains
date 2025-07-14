@@ -36,11 +36,20 @@ ap.add_argument("-d", "--debug",
                 help="Modo debug. Mostrar información de la pantalla (controles y variables). Valor default: False",
                 action="store_true")
 
+# Argumento para elegir el bot asistente a utilizar
+ap.add_argument("-a", "--assistant",
+                required=True,
+                help="Asistente. Elegir asistente de IA a utilizar",
+                type=str.lower)
+
+# Argumento para realizar demos
+ap.add_argument("-t", "--demo",
+                required=False,
+                help="Modo demostración. El asistente no es ocupado. Se utiliza un output de demostración. Valor default: False",
+                action="store_true")
+
 args = vars(ap.parse_args())
 
-
-# Umbral para considerar foto borrosa
-THRESHOLD: float = 299.12
 
 # Colores
 COLOR_BLACK: tuple = (0, 0, 0)
@@ -49,6 +58,7 @@ COLOR_BACKGROUND: tuple = (32, 32, 32)
 COLOR_REJECT: tuple = (139, 0, 0)   # Rojo
 COLOR_CONFIRM: tuple = (0, 128, 0)   # Verde
 
+# Pantalla
 FPS: int = 60
 BAR_SIZE: int = 250
 
@@ -63,3 +73,6 @@ FOUND_INTERNET: str = join(f"{BASE_DIR}", "assets", "found_internet.jpg")
 
 DEBUG_FONT = "Consolas"
 RESULTS_FONT = "Segoe UI Emoji"
+
+# Constantes que tienen que ver con los asistentes
+DEMO_MODE_OUTPUT: str = '👍 Lo que has logrado;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n📝 Para mejorar la organización;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n❓ Para reflexionar;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n✨ Mejorando correferencias;Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'

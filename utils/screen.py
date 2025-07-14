@@ -193,6 +193,12 @@ def draw_debug_menu(screen: Surface,
     # Mostrar la rotacion actual en base a la orientacion predeterminada
     draw_text(False, screen, f"Rotación actual: {rotation_angle}°", 0, 20)
 
+    # Asistente actual
+    draw_text(False, screen, f"Asistente actual: {args["assistant"]}", 0, 40)
+
+    # Modo demo
+    draw_text(False, screen, f"Modo demostración: {args["demo"]}", 0, 60)
+
     # Controles
     draw_text(False, screen, "<p>: tomar una foto", 0, window_heigth // 2)
     draw_text(False, screen, "<q>: cerrar programa",

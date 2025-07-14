@@ -109,13 +109,13 @@ def rotate_frame(frame):
 def take_photo(frame) -> str:
     """
     Procesar el frame de esa iteración.
-    Guardarlo como una imagen .jpg y analizar su blur.
+    Guardarlo como una imagen .jpg.
     """
 
     o = args["orientation"].upper()
 
-    abspath = os.path.dirname(os.path.realpath(__file__))
-    pics_dir = os.path.join(abspath, "pics")
+    abspath = os.path.dirname(os.path.realpath(__name__))
+    pics_dir = os.path.join(abspath, "output", "camera_pics")
     os.makedirs(pics_dir, exist_ok=True)
 
     frame = rotate_frame(frame)
@@ -126,7 +126,5 @@ def take_photo(frame) -> str:
 
     cv2.imwrite(filepath, frame)
     print(f"Foto guardada en: {filepath}")
-
-    # is_blurry = check_blur(filepath)
 
     return filepath

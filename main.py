@@ -1,4 +1,5 @@
-from ai_assistant.ai_scripts.assistant_gemini import Gemini
+from utils.assistant_gemini import Gemini
+from utils.assistant_gpt import Gpt
 from utils.events import handle_events
 from utils.screen import (
     initialize_font,
@@ -26,11 +27,26 @@ import cv2
 
 load_dotenv()
 
+# Crear al asistente de IA
 
-assistant = Gemini(
-    name='assistant',
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+match args["assistant"]:
+    case "gemini":
+        if not os.getenv("GEMINI_API_KEY"):
+            print("Error: GEMINI_API_KEY not found on env")
+            exit(-1)
+
+        assistant = Gemini(api_key=os.getenv("GEMINI_API_KEY"))
+
+    case "gpt":
+        if not os.getenv("OPENAI_API_KEY"):
+            print("Error: OPENAI_API_KEY not found on env")
+            exit(-1)
+
+        assistant = Gpt(api_key=os.getenv("OPENAI_API_KEY"))
+
+    case _:
+        print(f"Assistant '{args["assistant"]}' not valid")
+        exit(-1)
 
 
 def toggle_fullscreen(fullscreen: bool, screen_width: int, screen_height: int) -> Surface | bool:
