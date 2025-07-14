@@ -12,7 +12,7 @@ source "$PROJECT_DIR/.venv/bin/activate"
 antimicrox --hidden --profile "$PROJECT_DIR/botones.joystick.amgp" & ANTIMICROX_PID=$!
 
 # Ejecutar el programa
-python3 "$PROJECT_DIR/main.py" -o O -q 1
+python3 "$PROJECT_DIR/main.py" -o E -q 1 -a gemini
 
 # Finalizar antimicrox
 kill $ANTIMICROX_PID
