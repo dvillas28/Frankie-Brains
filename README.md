@@ -59,6 +59,12 @@ options:
 
   -d, --debug           Modo debug. Mostrar información de la pantalla (controles y variables). Valor default:
                         False
+
+  -a ASSISTANT, --assistant ASSISTANT
+                        Asistente. Elegir asistente de IA a utilizar
+  
+  -t, --demo            Modo demostración. El asistente no es ocupado. Se utiliza un output de demostración. Valor default: False
+
 ```
 
 ### Controles para el modo debug
