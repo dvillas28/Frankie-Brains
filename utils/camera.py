@@ -8,19 +8,21 @@ import cv2
 from cv2 import VideoCapture
 from datetime import datetime
 
-from utils.detect_blur import check_blur
+# from utils.detect_blur import check_blur
 from utils.config import args
 
-def find_camera(start_range: int=0) -> int | None:
+
+def find_camera(start_range: int = 0) -> int | None:
     # Buscar una cámara conectada
     """
     Obtener el indice de la camara, encuentra la primera disponible.
     """
 
+    # TODO: hallar una manera mas elegente de hacer esto
     if os.name == 'nt':
-        start_range = 1 # hack para saltarse la camara de defecto
-    
-    ranges = (start_range,10)
+        start_range = 1  # hack para saltarse la camara de defecto
+
+    ranges = (3, 10)
     for i in range(*ranges):
         cap = cv2.VideoCapture(i)
         if cap.isOpened():
@@ -29,6 +31,7 @@ def find_camera(start_range: int=0) -> int | None:
             if ret:
                 return i
     return None
+
 
 def initialize_camera(index: int) -> VideoCapture:
     """
@@ -47,12 +50,13 @@ def initialize_camera(index: int) -> VideoCapture:
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
     else:
-        
+
         # Resolucion de baja calidad
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
     return cap
+
 
 def set_rotation_angle() -> int:
     """
@@ -74,15 +78,16 @@ def set_rotation_angle() -> int:
 
         case "e":
             rot = (rot - 90) % 360
-            
+
     return rot
+
 
 def rotate_frame(frame):
     """
     Rotar el frame en base a la orientacion recibida en los argumentos.
     """
     orientation = args["orientation"].lower()
-    
+
     match orientation:
 
         case "n":
@@ -90,25 +95,25 @@ def rotate_frame(frame):
 
         # La orientacion Oeste no necesita rotacion
         # case "O":
-            
+
         case "s":
             frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
 
         case "e":
             frame = cv2.rotate(frame, cv2.ROTATE_180)
 
-    
     # Revertir la imagen
     return cv2.flip(frame, 0)
 
-def take_photo(frame) -> tuple[str, bool]:
+
+def take_photo(frame) -> str:
     """
     Procesar el frame de esa iteración.
     Guardarlo como una imagen .jpg y analizar su blur.
     """
 
     o = args["orientation"].upper()
-    
+
     abspath = os.path.dirname(os.path.realpath(__file__))
     pics_dir = os.path.join(abspath, "pics")
     os.makedirs(pics_dir, exist_ok=True)
@@ -122,6 +127,6 @@ def take_photo(frame) -> tuple[str, bool]:
     cv2.imwrite(filepath, frame)
     print(f"Foto guardada en: {filepath}")
 
-    is_blurry = check_blur(filepath)
+    # is_blurry = check_blur(filepath)
 
-    return filepath, is_blurry
+    return filepath

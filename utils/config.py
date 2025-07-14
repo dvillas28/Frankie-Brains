@@ -43,20 +43,23 @@ args = vars(ap.parse_args())
 THRESHOLD: float = 299.12
 
 # Colores
-COLOR_BLACK: tuple      = (0, 0, 0)
+COLOR_BLACK: tuple = (0, 0, 0)
+COLOR_WHITE: tuple = (255, 255, 255)
 COLOR_BACKGROUND: tuple = (32, 32, 32)
-COLOR_CONFIRM: tuple    = (139, 0, 0)   # Rojo
-COLOR_REJECT: tuple     = (0, 128, 0)   # Verde
+COLOR_REJECT: tuple = (139, 0, 0)   # Rojo
+COLOR_CONFIRM: tuple = (0, 128, 0)   # Verde
 
-FPS: int      = 60
+FPS: int = 60
 BAR_SIZE: int = 250
 
 # Rutas de las imagenes
 BASE_DIR = dirname(abspath(__file__)).replace("utils", "")
-NOTFOUND_NOINTERNET: str = join(f"{BASE_DIR}", "assets", "notfound_nointernet.jpg")
+BACKGROUND: str = join(f"{BASE_DIR}", "assets", "background.jpg")
+NOTFOUND_NOINTERNET: str = join(
+    f"{BASE_DIR}", "assets", "notfound_nointernet.jpg")
 NOTFOUND_INTERNET: str = join(f"{BASE_DIR}", "assets", "notfound_internet.jpg")
 FOUND_NOINTERNET: str = join(f"{BASE_DIR}", "assets", "found_nointernet.jpg")
 FOUND_INTERNET: str = join(f"{BASE_DIR}", "assets", "found_internet.jpg")
 
-DEBUG_FONT="Consolas"
-RESULTS_FONT="Segoe UI Emoji"
+DEBUG_FONT = "Consolas"
+RESULTS_FONT = "Segoe UI Emoji"

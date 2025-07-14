@@ -6,9 +6,26 @@ Funciones que actuan sobre la pantalla
 import os
 import pygame as pg
 from pygame import Surface
-from utils.config import args, BAR_SIZE, COLOR_BLACK, DEBUG_FONT, RESULTS_FONT
+from utils.config import (args, BAR_SIZE, COLOR_BLACK,
+                          DEBUG_FONT, RESULTS_FONT,
+                          NOTFOUND_NOINTERNET,
+                          NOTFOUND_INTERNET,
+                          FOUND_NOINTERNET,
+                          FOUND_INTERNET,
+                          BACKGROUND,
+                          )
 
 font = None
+
+# Carga de imagenes de fondo
+notfound_nointernet = pg.image.load(NOTFOUND_NOINTERNET)
+notfound_internet = pg.image.load(NOTFOUND_INTERNET)
+found_nointernet = pg.image.load(FOUND_NOINTERNET)
+found_internet = pg.image.load(FOUND_INTERNET)
+background = pg.image.load(BACKGROUND)
+
+# TODO: Generalizar el escrito para distintos prompts
+
 
 def initialize_font():
     """
@@ -17,7 +34,8 @@ def initialize_font():
     global font
     font = pg.font.SysFont(DEBUG_FONT, 18)
 
-def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: tuple=COLOR_BLACK) -> None:
+
+def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: tuple = COLOR_BLACK) -> None:
     """
     Dibuja texto en la pantalla en la posicion (x, y).
     """
@@ -29,6 +47,7 @@ def draw_text(always: bool, screen: Surface, text: str, x: int, y: int, color: t
 
     return
 
+
 def draw_centered_text(screen: Surface, text: str, rect: pg.Rect, font_size: int, color: tuple) -> None:
     """
     Dibuja texto centrado dentro de un rectángulo en la pantalla.
@@ -38,18 +57,20 @@ def draw_centered_text(screen: Surface, text: str, rect: pg.Rect, font_size: int
     text_rect = text_surface.get_rect(center=rect.center)
     screen.blit(text_surface, text_rect)
 
+
 def draw_list_items(screen: Surface, items: list, rect: pg.Rect, font_size: int, title_color: tuple, message_color: tuple) -> None:
     """
     Dibuja una lista de elementos (título y mensaje) dentro de un rectángulo en la pantalla.
     """
     font_title = pg.font.SysFont(RESULTS_FONT, font_size)
-    font_message = pg.font.SysFont(RESULTS_FONT, font_size - 4)  # Mensaje con fuente más pequeña
+    # Mensaje con fuente más pequeña
+    font_message = pg.font.SysFont(RESULTS_FONT, font_size - 4)
 
     # Margen interno dentro del rectángulo
     padding = 20
     x, y = rect.x + padding, rect.y + padding
 
-    max_width = rect.width - (2 * padding) # ancho máximo
+    max_width = rect.width - (2 * padding)  # ancho máximo
 
     for title, message in items:
         # Renderizar el título
@@ -66,25 +87,28 @@ def draw_list_items(screen: Surface, items: list, rect: pg.Rect, font_size: int,
                 current_line = test_line
             else:
                 # Renderizar la línea actual y comenzar una nueva
-                message_surface = font_message.render(current_line, True, message_color)
+                message_surface = font_message.render(
+                    current_line, True, message_color)
                 screen.blit(message_surface, (x, y))
                 y += font_message.get_height() + 5
                 current_line = word
 
         # Renderizar la última línea
         if current_line:
-            message_surface = font_message.render(current_line, True, message_color)
+            message_surface = font_message.render(
+                current_line, True, message_color)
             screen.blit(message_surface, (x, y))
             y += font_message.get_height() + 20  # Espacio entre elementos
 
-def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, max_width: int, color: tuple=COLOR_BLACK) -> None:
+
+def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, max_width: int, color: tuple = COLOR_BLACK) -> None:
     """
     Dibuja texto en la pantalla con ajuste de línea (wrap) si es demasiado largo.
     """
-    
+
     #  Si queremos mostrar el debug o si queremos mostrar el mensaje independiente de si estamos en debug o no
     if args["debug"] or always:
-        sep = lambda: '\\' if os.name == 'nt' else '/'
+        def sep(): return '\\' if os.name == 'nt' else '/'
         words = text.split(sep())
         lines = []
         current_line = ""
@@ -110,7 +134,8 @@ def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, 
 
     return
 
-def flash_screen(screen: Surface, color: tuple, duration: int=500, flashes: int=3) -> None:
+
+def flash_screen(screen: Surface, color: tuple, duration: int = 500, flashes: int = 3) -> None:
     """
     Hace que la pantalla parpadee con un color especifico.
     """
@@ -121,10 +146,10 @@ def flash_screen(screen: Surface, color: tuple, duration: int=500, flashes: int=
         pg.display.flip()
         pg.time.delay(interval)
         pg.display.flip()
-        screen.fill((32, 32, 32)) # color original de fondo
+        screen.fill((32, 32, 32))  # color original de fondo
         pg.display.flip()
         pg.time.delay(interval)
-    
+
 
 def pygame_blit_surface(screen: Surface, frame_surface,
                         window_width: int, window_height: int,
@@ -152,7 +177,8 @@ def pygame_blit_surface(screen: Surface, frame_surface,
 
     # Dibujar la imagen en la pantalla
     screen.blit(frame_surface, (x_offset, y_offset))
-    
+
+
 def draw_debug_menu(screen: Surface,
                     window_width: int, window_heigth: int,
                     rotation_angle: int) -> None:
@@ -161,14 +187,68 @@ def draw_debug_menu(screen: Surface,
     """
 
     # Mostrar texto independiente de si estamos mostrando la camara
-    draw_text(False, screen, f"Orientación: {args['orientation'].upper()}", 0, 0)
+    draw_text(False, screen,
+              f"Orientación: {args['orientation'].upper()}", 0, 0)
 
     # Mostrar la rotacion actual en base a la orientacion predeterminada
     draw_text(False, screen, f"Rotación actual: {rotation_angle}°", 0, 20)
-                
+
     # Controles
     draw_text(False, screen, "<p>: tomar una foto", 0, window_heigth // 2)
-    draw_text(False, screen, "<q>: cerrar programa", 0, window_heigth // 2 + 20)
-    draw_text(False, screen, "<s>: mostrar camara", 0, window_heigth // 2 + 20*2)
+    draw_text(False, screen, "<q>: cerrar programa",
+              0, window_heigth // 2 + 20)
+    draw_text(False, screen, "<s>: mostrar camara",
+              0, window_heigth // 2 + 20*2)
     draw_text(False, screen, "<Esc>: fullscreen", 0, window_heigth // 2 + 20*3)
-    draw_text(False, screen, "<Arrow Keys>: rotar", 0, window_heigth // 2 + 20*4)
+    draw_text(False, screen, "<Arrow Keys>: rotar",
+              0, window_heigth // 2 + 20*4)
+
+
+def scale_backgrounds(width: int, height: int) -> None:
+    """
+    Transforma las imagenes cargadas al tamaño definido por (width, height)
+    """
+    global notfound_nointernet
+    global notfound_internet
+    global found_nointernet
+    global found_internet
+    global background
+
+    notfound_nointernet = pg.transform.scale(
+        notfound_nointernet, (width, height))
+
+    notfound_internet = pg.transform.scale(
+        notfound_internet, (width, height))
+
+    found_nointernet = pg.transform.scale(
+        found_nointernet, (width, height))
+
+    found_internet = pg.transform.scale(
+        found_internet, (width, height))
+
+    background = pg.transform.scale(background, (width, height))
+
+
+def blit_background_to_screen(screen: Surface,
+                              show_result: bool = False,
+                              cam_found: bool = False,
+                              inet_connection: bool = False) -> None:
+    """
+    Dibuja una imagen dependiendo de los booleanos
+    """
+
+    if show_result:
+        screen.blit(background, (0, 0))
+        return
+
+    if not cam_found and not inet_connection:
+        screen.blit(notfound_nointernet, (0, 0))
+
+    elif not cam_found and inet_connection:
+        screen.blit(notfound_internet, (0, 0))
+
+    elif cam_found and not inet_connection:
+        screen.blit(found_nointernet, (0, 0))
+
+    else:
+        screen.blit(found_internet, (0, 0))
