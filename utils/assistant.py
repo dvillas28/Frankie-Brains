@@ -69,7 +69,12 @@ class Assistant(ABC):
     def save_result(self, image_path: str, response: str) -> None:
         image_name = os.path.splitext(os.path.basename(image_path))[0]
 
-        results_base_folder = os.path.join("output", "ai_results")
+        if not os.path.exists(os.path.join("/", "home", os.environ["USER"], "pyCamera")):
+            abspath = os.path.join("/", "home", os.environ["USER"], "Frankie-Brains")
+        else:
+            abspath = os.path.join("/", "home", os.environ["USER"], "pyCamera")
+        
+        results_base_folder = os.path.join(abspath, "output", "ai_results")
         image_results_folder = f"results_{image_name}"
 
         results_folder = os.path.join(

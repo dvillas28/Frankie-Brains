@@ -113,8 +113,12 @@ def take_photo(frame) -> str:
     """
 
     o = args["orientation"].upper()
-
-    abspath = os.path.dirname(os.path.realpath(__name__))
+    
+    if not os.path.exists(os.path.join("/", "home", os.environ["USER"], "pyCamera")):
+        abspath = os.path.join("/", "home", os.environ["USER"], "Frankie-Brains")
+    else:
+        abspath = os.path.join("/", "home", os.environ["USER"], "pyCamera")
+    
     pics_dir = os.path.join(abspath, "output", "camera_pics")
     os.makedirs(pics_dir, exist_ok=True)
 
