@@ -43,7 +43,7 @@ match args["assistant"]:
         assistant = Gpt(api_key=os.getenv("OPENAI_API_KEY"))
 
     case _:
-        print(f"Assistant '{args["assistant"]}' not valid")
+        print(f"Assistant {args['assistant']} not valid")
         exit(-1)
 
 

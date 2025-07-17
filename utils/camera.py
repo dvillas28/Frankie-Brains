@@ -22,7 +22,7 @@ def find_camera(start_range: int = 0) -> int | None:
     if os.name == 'nt':
         start_range = 1  # hack para saltarse la camara de defecto
 
-    ranges = (3, 10)
+    ranges = (start_range,10)
     for i in range(*ranges):
         cap = cv2.VideoCapture(i)
         if cap.isOpened():

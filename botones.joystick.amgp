@@ -6,7 +6,7 @@
     <uniqueID>03002061790000000600000010010000</uniqueID>
     <sets>
         <set index="1">
-            <axis index="5">
+            <axis index="4">
                 <center_value>0</center_value>
                 <min_value>-32767</min_value>
                 <max_value>32767</max_value>
@@ -18,7 +18,7 @@
                 <max_value>32767</max_value>
                 <throttle>normal</throttle>
             </axis>
-            <axis index="4">
+            <axis index="2">
                 <center_value>0</center_value>
                 <min_value>-32767</min_value>
                 <max_value>32767</max_value>
@@ -30,24 +30,24 @@
                 <max_value>32767</max_value>
                 <throttle>normal</throttle>
             </axis>
-            <axis index="2">
+            <axis index="5">
                 <center_value>0</center_value>
                 <min_value>-32767</min_value>
                 <max_value>32767</max_value>
                 <throttle>normal</throttle>
             </axis>
-            <button index="1">
+            <button index="2">
                 <slots>
                     <slot>
-                        <code>0x51</code>
+                        <code>0x31</code>
                         <mode>keyboard</mode>
                     </slot>
                 </slots>
             </button>
-            <button index="2">
+            <button index="1">
                 <slots>
                     <slot>
-                        <code>0x50</code>
+                        <code>0x30</code>
                         <mode>keyboard</mode>
                     </slot>
                 </slots>

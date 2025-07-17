@@ -6,7 +6,7 @@ Software de camara con integración IA. Por Daniel Villaseñor C durante 2025-1.
 
 Este programa utiliza la fuente `Segoe UI Emoji` para mostrar resultados. Esta se encuentra de forma nativa en Windows. En Linux, se puede descargar de [esta repo](https://github.com/mrbvrz/segoe-ui-linux#)
 
-## Instalación
+## Instalación para desarrollo
 
 Es necesaria tener una instalación previa de Python `3.11.X` o superior.
 Primero, clonar este repositorio y hacer `cd` en la carpeta creada.
@@ -39,8 +39,8 @@ pip install -r requirements.txt         # instalacion dependencias
 ## Ejecución
 
 ```bash
-python3 camera_pygame.py [-options]     # linux
-py camera_pygame.py [-h] [-options]     # windows
+python3 main.py [-options]     # linux
+py main.py [-h] [-options]     # windows
 ```
 
 ### Opciones
@@ -77,59 +77,31 @@ options:
 - `<Esc>`: Fullscreen
 - `<Arrow Keys>`: Rotar video
 
-## [Opcional] [Linux Only] Ejecución bajo comando
+## Ejecución en boot bajo comando y en Raspberry PI
 
 _Ojo_: Se requieren que estén los botones USB conectados previamente y tener una instalación de `antimicrox`
 
+_Ojo_ 2: Intrucciones compatibles solamente con X11
+
+### Script de instalación Raspberry PI
+
+Ejecutar el script de instalación:
 ```bash
-chmod +x start_pyCamera.sh             # convertir script bash en ejecutable
-./start_pyCamera.sh                    # ejecutar script (desde cualquier lugar)
+chmod +x install.sh
+./install.sh
+```
+Este script: 
+
+1. Crea un _symlink_ al ejecutable `start_pyCamera.sh` en el directorio `~/bin` para poder ejecutar el programa globalmente con el comando `pycamera`
+
+2. Crea un archivo `.desktop` para que el programa se ejecute en boot.
+
+### Script de desinstalación
+
+Ejecutar el script de desinstalación:
+```
+chmod +x uninstall.sh
+./uninstall.sh
 ```
 
-### Ejecución global
-
-1. Crear un _symlink_ al ejecutable del repositorio
-
-```bash
-mkdir -p ~/bin # crear un directorio de binarios de usuario (si no existe)
-ln -s /home/nombre_usuario/pyCamera/start_pyCamera.sh ~/bin/pycamera # crear un symlink (pycamera) al ejecutable original
-```
-
-2. Luego se agrega el _symlink_ `pycamera` al `PATH`. Agregar esta linea al final de `~/.bashrc`
-
-```bash
-export PATH="$HOME/bin:$PATH"
-```
-
-3. Y luego ejecutar
-
-```bash
-source ~/.bashrc
-```
-
-### Instrucciones para ejecutar en boot
-
-_Ojo_: Intrucciones compatibles solamente con X11
-
-Se asume que existe el ejecutable `start_pyCamera.sh` creado en la sección anterior
-
-1. Crear un archivo `.desktop` con las configuraciones necesarias
-
-```bash
-mkdir -p ~/.config/autostart          # crear el directorio (si no existe)
-nano pycamera.desktop                 # crear archivo de para iniciar en el escritorio
-```
-
-2. El archivo `pycamera.desktop` debe contener:
-
-```txt
-[Desktop Entry]
-Type=Application
-Exec=/home/raspi5/bin/pycamera
-Hidden=false
-NoDisplay=false
-X-GNOME-Autostart-enabled=true
-Name=Script de inicio de pyCamera
-Comment=Ejecuta pyCamera al inicio
-Terminal=true
-```
+Este script elimina el _symlink_ `pycamera` y el archivo `.desktop` creados por el script anterior.
