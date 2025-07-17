@@ -4,7 +4,7 @@ Software de camara con integración IA. Por Daniel Villaseñor C durante 2025-1.
 
 ## [Linux Only] Instalación de fonts utilizadas
 
-Este programa utiliza la fuente `Segoe UI Emoji` para mostrar resultados. Esta se encuentra de forma nativa en Windows. En Linux, se puede descargar de [esta repo](https://github.com/mrbvrz/segoe-ui-linux#)
+Este programa utiliza la fuente `Segoe UI Emoji` para mostrar resultados. Esta se encuentra de forma nativa en Windows. En Linux, se puede descargar desde [esta repo](https://github.com/mrbvrz/segoe-ui-linux#)
 
 ## Instalación para desarrollo
 
@@ -86,11 +86,13 @@ _Ojo_ 2: Intrucciones compatibles solamente con X11
 ### Script de instalación Raspberry PI
 
 Ejecutar el script de instalación:
+
 ```bash
 chmod +x install.sh
 ./install.sh
 ```
-Este script: 
+
+Este script:
 
 1. Crea un _symlink_ al ejecutable `start_pyCamera.sh` en el directorio `~/bin` para poder ejecutar el programa globalmente con el comando `pycamera`
 
@@ -99,7 +101,8 @@ Este script:
 ### Script de desinstalación
 
 Ejecutar el script de desinstalación:
-```
+
+```bash
 chmod +x uninstall.sh
 ./uninstall.sh
 ```

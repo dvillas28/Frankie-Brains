@@ -18,11 +18,10 @@ def find_camera(start_range: int = 0) -> int | None:
     Obtener el indice de la camara, encuentra la primera disponible.
     """
 
-    # TODO: hallar una manera mas elegente de hacer esto
-    if os.name == 'nt':
-        start_range = 1  # hack para saltarse la camara de defecto
+    if os.environ["USER"] == 'dvillasc':
+        start_range = 3  # hack para saltarse la camara de defecto
 
-    ranges = (start_range,10)
+    ranges = (start_range, 10)
     for i in range(*ranges):
         cap = cv2.VideoCapture(i)
         if cap.isOpened():
@@ -113,12 +112,13 @@ def take_photo(frame) -> str:
     """
 
     o = args["orientation"].upper()
-    
+
     if not os.path.exists(os.path.join("/", "home", os.environ["USER"], "pyCamera")):
-        abspath = os.path.join("/", "home", os.environ["USER"], "Frankie-Brains")
+        abspath = os.path.join(
+            "/", "home", os.environ["USER"], "Frankie-Brains")
     else:
         abspath = os.path.join("/", "home", os.environ["USER"], "pyCamera")
-    
+
     pics_dir = os.path.join(abspath, "output", "camera_pics")
     os.makedirs(pics_dir, exist_ok=True)
 

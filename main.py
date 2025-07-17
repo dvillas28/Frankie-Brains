@@ -236,6 +236,7 @@ def main() -> None:
     if cap:
         cap.release()
     pg.quit()
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
