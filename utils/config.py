@@ -55,8 +55,8 @@ args = vars(ap.parse_args())
 COLOR_BLACK: tuple = (0, 0, 0)
 COLOR_WHITE: tuple = (255, 255, 255)
 COLOR_BACKGROUND: tuple = (32, 32, 32)
-COLOR_REJECT: tuple = (139, 0, 0)   # Rojo
-COLOR_CONFIRM: tuple = (0, 128, 0)   # Verde
+COLOR_RED: tuple = (139, 0, 0)   # Rojo
+COLOR_GREEN: tuple = (0, 128, 0)   # Verde
 
 # Pantalla
 FPS: int = 60

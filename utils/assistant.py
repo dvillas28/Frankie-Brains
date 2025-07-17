@@ -2,40 +2,26 @@ from abc import ABC, abstractmethod
 import os
 import base64
 from utils.config import args, DEMO_MODE_OUTPUT
+from utils.prompts import prompts
+from utils.result import Result
 
 
 class Assistant(ABC):
+    """
+    Clase abstracta de un asistente de IA
+    """
 
     def __init__(self, name: str, api_key: str) -> None:
         self.name: str = name
         self.api_key = api_key
-        self.prompt = """" 
-    
-    Actúa como docente de Lengua y Literatura para 7° y 8° básico. Debes entregar una retroalimentación para el texto del estudiante que aparece en la imagen. Tu retroalimentación debe centrarse específicamente en el Objetivo de Aprendizaje 19: ""Escribir textos organizados en párrafos diferenciados temáticamente, precisos y cohesionados, mediante el correcto uso de la puntuación, diversos mecanismos de mantención del referente y una variedad de marcadores y conectores". 
-
-    Incluye estos 4 elementos en tu retroalimentación: 
-        - "👍 Lo que has logrado"": Un comentario positivo sobre algo que el estudiante logró correctamente según el Objetivo de Aprendizaje 19.
-        - "📝 Para mejorar la organización"": Una observación sobre cómo mejorar la organización de la información (marcadores discursivos y conectores), con un ejemplo concreto extraído del texto.
-        - "❓ Para reflexionar"": Una pregunta que guíe al estudiante a mejorar la progresión temática o profundidad temática de su texto.
-        - "✨ Mejorando correferencias"": Un ejemplo específico que muestre cómo mejorar la mantención del referente (sustituyendo palabras repetidas por pronombres, sinónimos, hipónimos, hiperónimos o anáforas).
-
-    Límite: 150 palabras máximo 
-    Tono: Positivo y adecuado para un estudiante de 13-14 años 
-    Formato: Usa subtítulos e íconos para facilitar la lectura"
-    Formato de salida: Debes entregar 1 linea en el siguiente formato:
-        👍 Lo que has logrado;[contenido]
-        📝 Para mejorar la organizacion;[contenido]
-        ❓ Para reflexionar;[contenido]
-        ✨ Lo que has logrado;[contenido]
-    Entrega solamente esa linea, nada mas, nada menos.
-    """
+        self.prompts: dict = prompts
 
     # Function to encode the image
     def encode_image(self, image_path: str):
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode("utf-8")
 
-    def process_image(self, image_path: str) -> dict:
+    def process_image(self, image_path: str, prompt_type: str) -> Result:
 
         if os.path.exists(image_path):
             try:
@@ -44,31 +30,37 @@ class Assistant(ABC):
                     response_list = self.format_response(DEMO_MODE_OUTPUT)
 
                 else:
-                    # TODO: Soporte para distintos promtps
 
+                    # Realizar el llamado y guardar el resultado
                     base64_image = self.encode_image(image_path)
-                    response = self.make_request(self.prompt, base64_image)
+                    response = self.make_request(
+                        self.prompts[prompt_type], base64_image)
                     self.save_result(image_path, response)
+
+                    # TODO 1: El formato del prompt depende del tipo
                     response_list = self.format_response(response)
 
-                return {
-                    "valid": True,
-                    "result": response_list
-                }
+                return Result(
+                    valid=True,
+                    data=response_list,
+                    result_type=prompt_type
+                )
 
             except Exception as e:
                 print(f"Error al procesar la imagen {image_path}: {e}")
-                return {
-                    "valid": False,
-                    "result": "Ha ocurrido un error en la API al procesar la imagen"
-                }
+
+                return Result(
+                    valid=False,
+                    data="Ha ocurrido un error en la API al procesar la imagen"
+                )
 
         else:
             print(f"La imagen {image_path} no existe")
-            return {
-                "valid": False,
-                "result": "La imagen tomada no se guardo correctamente"
-            }
+            return Result(
+                valid=False,
+                data="La imagen tomada no se guardo correctamente"
+
+            )
 
     @abstractmethod
     def make_request(self, prompt: str, base64_image):

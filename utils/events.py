@@ -1,5 +1,4 @@
 # events.py
-
 """
 Manejo de eventos
 """
@@ -7,10 +6,10 @@ Manejo de eventos
 import pygame as pg
 
 
-def handle_events(custom_events: dict, result: dict) -> tuple[bool, str]:
+def handle_events(custom_events: dict, result_is_none: bool) -> tuple[bool, str]:
     """
     Manejo de eventos
-    input: diccionario de eventos custom, si es que lo hay
+    input: diccionario de eventos custom, si es que lo hay. Objeto de resultados
     return: bool que indica si el programa sigue corriendo y un string que indica la accion a tomar
     """
 
@@ -22,7 +21,7 @@ def handle_events(custom_events: dict, result: dict) -> tuple[bool, str]:
 
         # Keydown events
         elif event.type == pg.KEYDOWN:
-            return keydown_events(event, result)
+            return keydown_events(event, result_is_none)
 
         elif event.type == custom_events["photo_taken_Event"]:
             return True, 'photo_taken'
@@ -30,23 +29,29 @@ def handle_events(custom_events: dict, result: dict) -> tuple[bool, str]:
     return True, ''
 
 
-def keydown_events(event, result: dict) -> tuple[bool, str]:
+photo_keys: set = {pg.K_0, pg.K_1}
+
+
+def keydown_events(event, result_is_none: bool) -> tuple[bool, str]:
     """
     Manejo de eventos al presionar una tecla
     """
 
+    global photo_keys
+
     # Salir al presionar q
-    # TODO: nuevo proposito para la tecla q
     if event.key == pg.K_q:
         return False, ''
 
-    # Si hay resultado y se presiona p, limpiar resultado
-    if event.key == pg.K_p and result:
+    # Si hay resultado y se presiona una de las teclas de imagen, limpiar resultado
+    if (event.key in photo_keys) and result_is_none:
         return True, 'clear_result'
 
-    # probar a tomar una foto al presionar q
-    elif event.key == pg.K_p:
-        return True, 'try_to_take_photo'
+    elif event.key == pg.K_0:
+        return True, 'try_to_take_photo:PLANIFICACION'
+
+    elif event.key == pg.K_1:
+        return True, 'try_to_take_photo:REVISION'
 
     # fullscreen al presionar escape
     elif event.key == pg.K_ESCAPE:

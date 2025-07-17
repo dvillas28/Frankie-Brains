@@ -3,10 +3,9 @@
 Funciones que actuan sobre la pantalla
 """
 
-import os
 import pygame as pg
 from pygame import Surface
-from utils.config import (args, BAR_SIZE, COLOR_BLACK,
+from utils.config import (args, BAR_SIZE, COLOR_BLACK, COLOR_WHITE,
                           DEBUG_FONT, RESULTS_FONT,
                           NOTFOUND_NOINTERNET,
                           NOTFOUND_INTERNET,
@@ -14,6 +13,7 @@ from utils.config import (args, BAR_SIZE, COLOR_BLACK,
                           FOUND_INTERNET,
                           BACKGROUND,
                           )
+from utils.result import Result
 
 font = None
 
@@ -23,8 +23,6 @@ notfound_internet = pg.image.load(NOTFOUND_INTERNET)
 found_nointernet = pg.image.load(FOUND_NOINTERNET)
 found_internet = pg.image.load(FOUND_INTERNET)
 background = pg.image.load(BACKGROUND)
-
-# TODO: Generalizar el escrito para distintos prompts
 
 
 def initialize_font():
@@ -58,9 +56,59 @@ def draw_centered_text(screen: Surface, text: str, rect: pg.Rect, font_size: int
     screen.blit(text_surface, text_rect)
 
 
+def draw_result(screen: Surface, dims: tuple, data: Result) -> None:
+    """
+    Dibuja los resultados a la pantalla. El tipo de dibujo depende del resultado del prompt 
+    (tipo de prompts, o si este falló)
+    """
+
+    # Aplicar el fondo donde irá el rectangulo de resultados
+    blit_background_to_screen(screen=screen, show_result=True)
+
+    # Dibujar un rectangulo donde irán los resultados
+    rect_width, rect_height = dims[0] - 200, dims[1] - 200
+    rect_x, rect_y = 100, 50
+    pg.draw.rect(screen, COLOR_WHITE,
+                 (rect_x, rect_y, rect_width, rect_height))
+
+    # Rectangulo para el texto
+    rect = pg.Rect(rect_x, rect_y, rect_width, rect_height)
+
+    if data.valid:
+        if data.result_type == "REVISION":
+            draw_list_items(
+                screen=screen,
+                items=data.data,
+                rect=rect,
+                font_size=35,
+                title_color=COLOR_BLACK,
+                message_color=COLOR_BLACK
+            )
+
+        elif data.result_type == "PLANIFICACION":
+            # TODO 2: Aun no tenemos definido el formato de salida de este prompt
+            # A lo mejor habria que definir un prompt generico de dibujo
+            draw_centered_text(
+                screen=screen,
+                text='PLANIFICACION',
+                rect=rect,
+                font_size=24,
+                color=COLOR_BLACK
+            )
+
+    else:
+        draw_centered_text(
+            screen=screen,
+            text=data.data,
+            rect=rect,
+            font_size=24,
+            color=COLOR_BLACK
+        )
+
+
 def draw_list_items(screen: Surface, items: list, rect: pg.Rect, font_size: int, title_color: tuple, message_color: tuple) -> None:
     """
-    Dibuja una lista de elementos (título y mensaje) dentro de un rectángulo en la pantalla.
+    Dibuja una lista de listas de la forma [título y mensaje)] dentro de un rectángulo en la pantalla.
     """
     font_title = pg.font.SysFont(RESULTS_FONT, font_size)
     # Mensaje con fuente más pequeña
@@ -99,40 +147,6 @@ def draw_list_items(screen: Surface, items: list, rect: pg.Rect, font_size: int,
                 current_line, True, message_color)
             screen.blit(message_surface, (x, y))
             y += font_message.get_height() + 20  # Espacio entre elementos
-
-
-def draw_wrapped_text(always: bool, screen: Surface, text: str, x: int, y: int, max_width: int, color: tuple = COLOR_BLACK) -> None:
-    """
-    Dibuja texto en la pantalla con ajuste de línea (wrap) si es demasiado largo.
-    """
-
-    #  Si queremos mostrar el debug o si queremos mostrar el mensaje independiente de si estamos en debug o no
-    if args["debug"] or always:
-        def sep(): return '\\' if os.name == 'nt' else '/'
-        words = text.split(sep())
-        lines = []
-        current_line = ""
-
-        for word in words:
-            # Probar si agregar la palabra excede el ancho máximo
-            test_line = f"{current_line} {word}".strip()
-            if font.size(test_line)[0] <= max_width:
-                current_line = test_line
-            else:
-                lines.append(current_line)
-                current_line = word
-
-        # Agregar la última línea
-        if current_line:
-            lines.append(current_line)
-
-        # Dibujar cada línea
-        line_height = font.size("Tg")[1]  # Altura de una línea de texto
-        for i, line in enumerate(lines):
-            text_surface = font.render(line, True, color)
-            screen.blit(text_surface, (x, y + i * line_height))
-
-    return
 
 
 def flash_screen(screen: Surface, color: tuple, duration: int = 500, flashes: int = 3) -> None:

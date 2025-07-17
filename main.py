@@ -4,20 +4,18 @@ from utils.events import handle_events
 from utils.screen import (
     initialize_font,
     draw_text,
-    draw_list_items,
     draw_debug_menu,
     flash_screen,
     pygame_blit_surface,
     scale_backgrounds,
-    blit_background_to_screen)
+    blit_background_to_screen,
+    draw_result)
 from utils.camera import find_camera, initialize_camera, set_rotation_angle, take_photo
 from utils.internet import connected_to_internet
 from utils.config import (
     args,
-    COLOR_CONFIRM,
-    FPS,
-    COLOR_WHITE,
-    COLOR_BLACK)
+    COLOR_GREEN,
+    FPS)
 import os
 from threading import Thread
 from dotenv import load_dotenv
@@ -104,16 +102,16 @@ def main() -> None:
     # Variables para la imagen tomada
     filepath: str = ''        # path del archivo a guardar
     done_processing: bool = True  # API procesando imagen
-    result: dict = dict()     # resultados del llamado a la API
+    result = None  # resultados del llamado a la API
 
-    def process_image_thread(filepath: str) -> None:
+    def process_image_thread(filepath: str, prompt_type: str) -> None:
         nonlocal result, done_processing
         done_processing = False
-        result = assistant.process_image(filepath)
+        result = assistant.process_image(filepath, prompt_type)
         done_processing = True
 
     while running:
-        # search for camera()
+        # Mantenerse buscando una camara la cual conectarse
         if not camera_found:
             camera_index = find_camera()
             if camera_index is not None:
@@ -121,7 +119,7 @@ def main() -> None:
                 cap = initialize_camera(camera_index)
                 camera_found = True
 
-        # search_for_internet()
+        # Mantenerse revisando si se esta conectado a internet
         if not internet_connection:
             internet_connection = connected_to_internet()
 
@@ -154,32 +152,18 @@ def main() -> None:
                 # Acciones cuando una foto fue tomada. Nada por ahora
                 pass
 
-                # Mostrar si se esta procesando un llamado
+            # Mostrar si se esta procesando un llamado
             if not done_processing:
                 draw_text(True, screen, "Cargando...",
                           win_w // 2 - 50, win_h // 2)
 
             # Mostrar si el resultado ya fue procesado y esta listo
             if done_processing and result:
-                blit_background_to_screen(screen=screen, show_result=True)
+                draw_result(screen=screen,
+                            dims=(screen_width, screen_height),
+                            data=result)
 
-                # Dibujar un cuadrado donde irán los resultados
-                rect_width, rect_height = screen_width - 200, screen_height - 200
-                rect_x, rect_y = 100, 50
-
-                pg.draw.rect(screen, COLOR_WHITE,
-                             (rect_x, rect_y, rect_width, rect_height))
-
-                # Rectangulo para el texto
-                rect = pg.Rect(rect_x, rect_y, rect_width, rect_height)
-
-                if result["valid"]:
-                    draw_list_items(
-                        screen, result['result'], rect, font_size=35, title_color=COLOR_BLACK, message_color=COLOR_BLACK)
-
-                else:
-                    draw_list_items(screen,  [["Error", "Hubo un error con la API"]], rect,
-                                    font_size=24, title_color=COLOR_BLACK, message_color=COLOR_BLACK)
+        # No hay camara o no hay conexión a internet
         else:
             if not (camera_found and cap is not None):
                 draw_text(False, screen, "Buscando cámara...",
@@ -190,28 +174,36 @@ def main() -> None:
                           screen_width // 2 - 150, screen_height // 2)
 
         # Manejo de eventos
-        running, action = handle_events(custom_events, result)
+        running, action = handle_events(
+            custom_events=custom_events,
+            result_is_none=(lambda: True if result else False)()
+        )
+
         match action:
             case '':
                 # no hacer nada
                 pass
 
-            case 'try_to_take_photo':
+            # Este patron comprueba si la accion es del tipo 'try_to_take_photo:?' (? es una wildcard)
+            case action if action.startswith('try_to_take_photo:'):
                 if camera_found:
 
                     filepath = take_photo(
                         cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
 
+                    # Obtener el tipo de prompt a utilizar con el asistente
+                    prompt_type: str = (lambda: action.split(':')[1])()
+
                     th = Thread(target=process_image_thread,
-                                args=(filepath,))
+                                args=(filepath, prompt_type,))
                     th.start()
 
-                    flash_screen(screen, color=COLOR_CONFIRM)
+                    flash_screen(screen, color=COLOR_GREEN)
                     photo_taken = True
                     pg.time.set_timer(photo_taken_Event, 5000)
 
             case 'clear_result':
-                result = dict()
+                result = None
                 photo_taken = False
                 blit_background_to_screen(
                     screen, cam_found=camera_found, inet_connection=internet_connection)

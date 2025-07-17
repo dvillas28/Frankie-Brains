@@ -69,7 +69,8 @@ options:
 
 ### Controles para el modo debug
 
-- `<p>`: tomar foto
+- `<0>`: tomar foto y pasarla por el prompt `PLANIFICACION` de `utils/prompts.py`
+- `<1>`: tomar foto y pasarla por el prompt `REVISION` de `utils/prompts.py`
 - `<q>`: cerrar programa
 - `<s>`: mostrar camara
 - `<d>`: modo debug
